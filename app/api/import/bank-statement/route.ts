@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getOptionalSession } from "@/server/dal/session";
 import { parseBankStatement } from "@/lib/import/parseBankStatement";
 
 // pdf-parse ships a CommonJS bundle without a default ESM export; use require
 const pdfParse = require("pdf-parse") as (
   buffer: Buffer,
 ) => Promise<{ text: string }>;
-import { getOptionalSession } from "@/server/dal/session";
 
 export const runtime = "nodejs";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
 const MIN_TEXT_LENGTH = 50;
+const PDF_MAGIC = Buffer.from([0x25, 0x50, 0x44, 0x46]); // %PDF
 
 export async function POST(request: NextRequest) {
   const session = await getOptionalSession();
@@ -46,6 +47,25 @@ export async function POST(request: NextRequest) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
 
+  // Enforce size limit on actual bytes (client-reported size can be spoofed)
+  if (buffer.byteLength > MAX_FILE_BYTES) {
+    return NextResponse.json(
+      { error: "File too large. Maximum size is 10 MB." },
+      { status: 413 },
+    );
+  }
+
+  // Verify PDF magic bytes (%PDF) to reject renamed non-PDF files
+  if (
+    buffer.length < 4 ||
+    !buffer.slice(0, 4).equals(PDF_MAGIC)
+  ) {
+    return NextResponse.json(
+      { error: "Only PDF files are supported" },
+      { status: 415 },
+    );
+  }
+
   let parsed: { text: string };
   try {
     parsed = await pdfParse(buffer);
@@ -66,7 +86,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const transactions = parseBankStatement(parsed.text);
+  let transactions: ReturnType<typeof parseBankStatement>;
+  try {
+    transactions = parseBankStatement(parsed.text);
+  } catch {
+    return NextResponse.json(
+      {
+        error:
+          "We couldn't read transactions from this file. Try a different export format.",
+      },
+      { status: 422 },
+    );
+  }
 
   if (transactions.length === 0) {
     return NextResponse.json(
