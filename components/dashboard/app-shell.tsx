@@ -10,6 +10,7 @@ export type AppNavKey =
   | "budget"
   | "savings"
   | "learn"
+  | "import"
   | "onboarding"
   | "plan"
   | "guidance"
@@ -25,6 +26,7 @@ const navSections = [
       ["◆", "Budget", "/dashboard/budget", "budget"],
       ["◎", "Savings", "/dashboard/savings", "savings"],
       ["✦", "Learn", "/dashboard/learn", "learn"],
+      ["↑", "Import", "/dashboard/import", "import"],
     ],
   },
   {
