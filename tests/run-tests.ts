@@ -223,6 +223,19 @@ async function runTests() {
     }
   }
 
+  // parseBankStatement smoke test
+  {
+    const parser = requireFresh(
+      path.join(__dirname, "..", "lib", "import", "parseBankStatement.ts"),
+    );
+    const empty = parser.parseBankStatement("");
+    assert.deepStrictEqual(empty, [], "parseBankStatement: empty returns []");
+
+    const one = parser.parseBankStatement("01/05/2026  Shop  -3.50");
+    assert(one.length === 1, "parseBankStatement: parses one transaction");
+    assert(one[0].amount === 3.5, "parseBankStatement: correct amount");
+  }
+
   console.log("All tests passed (lightweight)");
 }
 
