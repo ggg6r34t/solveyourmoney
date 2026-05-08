@@ -1,74 +1,38 @@
 import { EmptyState } from "@/components/dashboard/empty-state";
-import { LearnItem } from "@/components/dashboard/learn-item";
 import { PageShell } from "@/components/dashboard/page-shell";
-import { ProgressBar } from "@/components/dashboard/progress-bar";
-import { RightPanel } from "@/components/dashboard/right-panel";
-import { XPBar } from "@/components/dashboard/xp-bar";
-import { getDevelopmentDashboardData } from "@/features/dashboard/mockData";
+import { getLearnData } from "@/features/learn/services/learnService";
 import { requireSession } from "@/server/dal/session";
 
-const filters = ["All", "Debt", "Savings", "Budget", "Credit", "BNPL"];
-
 export default async function LearnPage() {
-  await requireSession();
-  const data = getDevelopmentDashboardData();
+  const session = await requireSession();
+  const { lessons } = await getLearnData({ userId: session.userId });
+  const completedCount = lessons.filter((l) => l.completed).length;
 
-  if (!data) {
+  if (lessons.length === 0) {
     return (
-      <PageShell active="learn" title="Learn & Earn XP" subtitle="Production learning content is not configured yet.">
-        <EmptyState message="No learning content is available." />
+      <PageShell active="learn" title="Learn & Earn XP" subtitle="Read tips and answer quizzes to level up your money skills.">
+        <EmptyState message="No lessons available yet." />
       </PageShell>
     );
   }
 
   return (
-    <PageShell active="learn" title="Learn & Earn XP" subtitle="Read tips and answer quizzes to level up your money skills">
-      <div className="rounded-2xl border border-border bg-panel p-5">
-        <XPBar level={7} xp={1240} max={1600} />
-      </div>
-      <div className="mt-5 flex flex-wrap gap-3">
-        {filters.map((filter, index) => (
-          <span
-            className={`rounded-full border border-border px-5 py-3 text-sm font-black ${
-              index === 0 ? "bg-primary text-white" : "bg-panel text-muted"
-            }`}
-            key={filter}
-          >
-            {filter}
-          </span>
+    <PageShell active="learn" title="Learn & Earn XP" subtitle={`${completedCount} of ${lessons.length} lesson${lessons.length === 1 ? "" : "s"} completed`}>
+      <div className="grid gap-3">
+        {lessons.map((lesson) => (
+          <div key={lesson.id} className="flex items-center gap-4 rounded-2xl border border-border bg-panel p-5">
+            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${lesson.completed ? "bg-success" : "bg-track"}`}>
+              {lesson.completed && (
+                <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+            <p className={`text-base font-black ${lesson.completed ? "text-muted line-through" : "text-foreground"}`}>
+              {lesson.title}
+            </p>
+          </div>
         ))}
-      </div>
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_260px]">
-        <section className="grid gap-3">
-          {data.learnItems.map((item) => (
-            <LearnItem item={item} key={item.title} />
-          ))}
-        </section>
-        <div className="grid content-start gap-5">
-          <RightPanel title="Your Progress">
-            <div className="grid gap-4">
-              {filters.slice(1).map((filter, index) => (
-                <div key={filter}>
-                  <div className="mb-1 flex justify-between text-xs font-bold text-muted">
-                    <span>{filter}</span>
-                    <span>{[78, 64, 58, 42, 24][index]}%</span>
-                  </div>
-                  <ProgressBar value={[78, 64, 58, 42, 24][index]} tone="primary" />
-                </div>
-              ))}
-            </div>
-          </RightPanel>
-          <RightPanel title="Badges">
-            <div className="grid gap-3">
-              <div className="rounded-xl border border-primary bg-primary-soft p-4 text-sm font-black text-primary">
-                🏆 First Plan
-              </div>
-              <div className="rounded-xl border border-primary bg-primary-soft p-4 text-sm font-black text-primary">
-                📚 First Read
-              </div>
-            </div>
-          </RightPanel>
-        </div>
       </div>
     </PageShell>
   );
