@@ -56,7 +56,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Dynamic require defers module evaluation to request time (avoids build-time canvas polyfill errors)
+  // pdfjs-dist (used internally by pdf-parse) tries to initialise canvas globals at module load.
+  // Stub them out before requiring so text extraction works without a canvas installation.
+  const g = globalThis as Record<string, unknown>;
+  if (!g.DOMMatrix) g.DOMMatrix = class {};
+  if (!g.ImageData) g.ImageData = class {};
+  if (!g.Path2D) g.Path2D = class {};
+
   const pdfParse = require("pdf-parse") as (
     buffer: Buffer,
   ) => Promise<{ text: string }>;
