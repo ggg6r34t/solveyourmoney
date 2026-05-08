@@ -2,8 +2,6 @@ import { createHmac } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const runtime = "nodejs";
-
 type LemonSqueezyEvent = {
   meta?: {
     event_name?: string;

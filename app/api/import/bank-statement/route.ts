@@ -2,13 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOptionalSession } from "@/server/dal/session";
 import { parseBankStatement } from "@/lib/import/parseBankStatement";
 
-// pdf-parse ships a CommonJS bundle without a default ESM export; use require
-const pdfParse = require("pdf-parse") as (
-  buffer: Buffer,
-) => Promise<{ text: string }>;
-
-export const runtime = "nodejs";
-
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
 const MIN_TEXT_LENGTH = 50;
 const PDF_MAGIC = Buffer.from([0x25, 0x50, 0x44, 0x46]); // %PDF
@@ -56,15 +49,17 @@ export async function POST(request: NextRequest) {
   }
 
   // Verify PDF magic bytes (%PDF) to reject renamed non-PDF files
-  if (
-    buffer.length < 4 ||
-    !buffer.slice(0, 4).equals(PDF_MAGIC)
-  ) {
+  if (buffer.length < 4 || !buffer.slice(0, 4).equals(PDF_MAGIC)) {
     return NextResponse.json(
       { error: "Only PDF files are supported" },
       { status: 415 },
     );
   }
+
+  // Dynamic require defers module evaluation to request time (avoids build-time canvas polyfill errors)
+  const pdfParse = require("pdf-parse") as (
+    buffer: Buffer,
+  ) => Promise<{ text: string }>;
 
   let parsed: { text: string };
   try {
