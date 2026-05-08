@@ -50,12 +50,18 @@ export function parseBankStatement(text: string): ParsedTransaction[] {
     const isTrailingMinus = lastToken === "-" && rawAmount !== lastToken;
     const hasLeadingMinus = rawAmount.startsWith("-");
 
+    // Skip if the "amount" token is the date itself (e.g. header lines like "01/05/2026")
+    if (rawAmount === dateMatch[0]) continue;
+    // Skip non-numeric tokens that slipped past (must start with digit or sign)
+    if (!/^[+-]?\d/.test(rawAmount)) continue;
+
     const absAmount = parseAmount(rawAmount);
     if (absAmount === null || absAmount === 0) continue;
 
     const isDebit = hasLeadingMinus || isTrailingMinus;
 
     const dateEnd = (dateMatch.index ?? 0) + dateMatch[0].length;
+    // lastIndexOf is correct: rawAmount is the rightmost token, so the last occurrence is the amount
     const amountIdx = line.lastIndexOf(rawAmount);
     const descRaw = line.slice(dateEnd, amountIdx).trim();
     const description = descRaw.replace(/\s+/g, " ") || "Transaction";

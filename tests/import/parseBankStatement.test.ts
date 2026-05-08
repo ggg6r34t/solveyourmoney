@@ -32,6 +32,7 @@ const { parseBankStatement } = requireFresh(
   const r = parseBankStatement("15.05.2026  Supermarkt        -1.234,56");
   assert.strictEqual(r.length, 1, "one transaction");
   assert.strictEqual(r[0].amount, 1234.56, "European amount parsed correctly");
+  assert.strictEqual(r[0].type, "debit", "European debit detected");
 }
 
 // 4: credit transaction
