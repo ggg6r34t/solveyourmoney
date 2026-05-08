@@ -209,12 +209,8 @@ export async function markLessonComplete(input: {
     {
       user_id: session.userId,
       slug: parsed.data.slug,
-      category: parsed.data.slug.split("-")[0],
-      title: parsed.data.slug.replaceAll("-", " "),
-      reading_minutes: 5,
-      xp_reward: 80,
+      xp: 80,
       completed_at: new Date().toISOString(),
-      last_viewed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     { onConflict: "user_id,slug" },
