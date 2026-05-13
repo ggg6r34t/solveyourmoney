@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { AppProviders } from "./providers";
 import "./globals.css";
 
@@ -14,6 +15,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#3142a9",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://solveyourmoney.com"),
@@ -42,6 +50,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  appleWebApp: {
+    capable: true,
+    title: "SolveYourMoney",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: "/icons/180",
+  },
 };
 
 export default function RootLayout({
@@ -56,6 +72,15 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <AppProviders>{children}</AppProviders>
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            id="sw-registration"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js')`,
+            }}
+          />
+        )}
       </body>
     </html>
   );
