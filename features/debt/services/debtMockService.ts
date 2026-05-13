@@ -10,7 +10,7 @@ export function getDebtData({ userId }: { userId: string }): DebtResponse {
     { id: "d-1", principal: 12000, interestRate: 0.05, label: "Student Loan", minPayment: 240 },
     { id: "d-2", principal: 3000, interestRate: 0.18, label: "Credit Card", minPayment: 60 },
   ];
-  const calc = avalanchePayoff(items, 0);
+  const payoffResult = avalanchePayoff(items, 0);
   return DebtResponseSchema.parse({
     userId,
     timestamp: now,
@@ -18,10 +18,10 @@ export function getDebtData({ userId }: { userId: string }): DebtResponse {
     computed: {
       totalBalance: items.reduce((s, d) => s + d.principal, 0),
       totalMinPayment: items.reduce((s, d) => s + d.minPayment, 0),
-      totalInterest: calc.totalInterest,
-      debtFreeDate: calc.debtFreeDate,
-      monthsToPayoff: calc.monthsToPayoff,
-      avalancheOrder: calc.order,
+      totalInterest: payoffResult.totalInterest,
+      debtFreeDate: payoffResult.debtFreeDate,
+      monthsToPayoff: payoffResult.monthsToPayoff,
+      avalancheOrder: payoffResult.order,
     },
   });
 }
