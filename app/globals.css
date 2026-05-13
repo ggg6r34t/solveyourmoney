@@ -685,3 +685,20 @@ input[type="range"].slim::-moz-range-thumb {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ─── Main content responsive wrapper ─── */
+.main-content {
+  padding-top: calc(52px + env(safe-area-inset-top));
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 40px 56px;
+  }
+}

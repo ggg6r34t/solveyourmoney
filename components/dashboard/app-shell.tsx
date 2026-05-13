@@ -48,8 +48,16 @@ const primaryNav: NavItem[] = [
 ];
 
 const accountNav: NavItem[] = [
-  { id: "notifications",  label: "Notifications",  href: "/dashboard/notifications",     Icon: Bell },
-  { id: "settings",       label: "Settings",       href: "/settings",                    Icon: Settings },
+  { id: "notifications", label: "Notifications", href: "/dashboard/notifications", Icon: Bell },
+  { id: "settings",      label: "Settings",      href: "/settings",                Icon: Settings },
+];
+
+const mobileBottomTabs: NavItem[] = [
+  { id: "overview", label: "Overview", href: "/dashboard",         Icon: LayoutDashboard },
+  { id: "debt",     label: "Debt",     href: "/dashboard/debt",    Icon: CreditCard },
+  { id: "budget",   label: "Budget",   href: "/dashboard/budget",  Icon: PieChart },
+  { id: "savings",  label: "Savings",  href: "/dashboard/savings", Icon: Target },
+  { id: "learn",    label: "Learn",    href: "/dashboard/learn",   Icon: BookOpen },
 ];
 
 async function SidebarContents({ active }: { active: AppNavKey }) {
@@ -246,7 +254,6 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
             </Link>
           );
         })}
-
       </nav>
 
       {/* Profile */}
@@ -298,6 +305,135 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
   );
 }
 
+async function MobileTopBar({ active }: { active: AppNavKey }) {
+  let session: Awaited<ReturnType<typeof requireSession>> | null = null;
+  try { session = await requireSession(); } catch {}
+
+  const userId = session?.userId;
+  let level = 1, streak = 0, levelName = "Starter";
+
+  if (userId) {
+    try {
+      const gam = await getGamificationData({ userId });
+      level = gam.level;
+      streak = gam.streak;
+      levelName = gam.levelName;
+    } catch {}
+  }
+
+  return (
+    <header
+      role="banner"
+      aria-label="SolveYourMoney"
+      className="flex lg:hidden"
+      style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 30,
+        paddingTop: "env(safe-area-inset-top)",
+        background: "linear-gradient(180deg, oklch(0.16 0.014 282 / 0.85), oklch(0.135 0.012 282 / 0.85))",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderBottom: "1px solid var(--line)",
+      }}
+    >
+      <div style={{
+        height: 52, display: "flex", alignItems: "center",
+        justifyContent: "space-between", padding: "0 16px", width: "100%",
+      }}>
+        {/* Brand mark */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{
+            width: 24, height: 24, borderRadius: 7, flexShrink: 0,
+            background: "conic-gradient(from 220deg at 50% 50%, oklch(0.66 0.18 282), oklch(0.78 0.14 250), oklch(0.66 0.18 282))",
+            position: "relative",
+            boxShadow: "0 0 0 1px oklch(1 0 0 / 0.08)",
+          }}>
+            <span style={{ position: "absolute", inset: 4, borderRadius: 4, background: "var(--bg-0)" }} />
+            <span style={{
+              position: "absolute", left: "50%", top: "50%",
+              width: 6, height: 6, borderRadius: "50%",
+              transform: "translate(-50%, -50%)",
+              background: "var(--fg)", zIndex: 1,
+            }} />
+          </div>
+          <span style={{ fontWeight: 560, letterSpacing: "-0.02em", fontSize: 13, color: "var(--fg)" }}>
+            solve<span style={{ color: "var(--fg-mute)", fontWeight: 440 }}>your</span>money
+          </span>
+        </div>
+
+        {/* Level + streak */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: "3px 8px 3px 6px", borderRadius: 999,
+            background: "oklch(0.66 0.18 282 / 0.18)",
+            fontSize: 11, fontWeight: 540, color: "oklch(0.85 0.10 282)",
+          }}>
+            <span style={{
+              width: 5, height: 5, borderRadius: "50%",
+              background: "var(--primary-glow)",
+              boxShadow: "0 0 6px var(--primary-glow)",
+            }} />
+            Lv {level} · {levelName}
+          </span>
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 4,
+            fontFamily: "var(--font-mono)", fontSize: 11,
+            color: "var(--streak)",
+          }}>
+            <Flame size={11} />
+            {streak}d
+          </span>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function MobileBottomNav({ active }: { active: AppNavKey }) {
+  return (
+    <nav
+      aria-label="Main navigation"
+      className="flex lg:hidden"
+      style={{
+        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 30,
+        paddingBottom: "env(safe-area-inset-bottom)",
+        background: "linear-gradient(180deg, oklch(0.16 0.014 282 / 0.85), oklch(0.135 0.012 282 / 0.85))",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderTop: "1px solid var(--line)",
+      }}
+    >
+      {mobileBottomTabs.map(({ id, label, href, Icon }) => {
+        const isActive = active === id;
+        return (
+          <Link
+            key={id}
+            href={href as Route}
+            aria-current={isActive ? "page" : undefined}
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 56,
+              gap: 4,
+              textDecoration: "none",
+              color: isActive ? "var(--primary-glow)" : "var(--fg-mute)",
+              transition: "color 120ms ease",
+            }}
+          >
+            <Icon size={20} style={{ opacity: isActive ? 1 : 0.6 }} />
+            <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: "0.01em" }}>
+              {label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 export function AppShell({
   children,
   active,
@@ -307,17 +443,21 @@ export function AppShell({
 }) {
   return (
     <div className="app-bg min-h-screen" style={{ color: "var(--fg)" }}>
-      {/* Sidebar */}
-      <aside style={{
-        position: "fixed", inset: "0 auto 0 0", zIndex: 20,
-        width: 264,
-        borderRight: "1px solid var(--line)",
-        background: "linear-gradient(180deg, oklch(0.16 0.014 282 / 0.6), oklch(0.135 0.012 282 / 0.6))",
-        backdropFilter: "blur(12px)",
-        padding: "20px 14px",
-        display: "flex", flexDirection: "column", gap: 18,
-        overflowY: "auto",
-      }}
+      {/* Mobile top bar */}
+      <MobileTopBar active={active} />
+
+      {/* Desktop sidebar */}
+      <aside
+        style={{
+          position: "fixed", inset: "0 auto 0 0", zIndex: 20,
+          width: 264,
+          borderRight: "1px solid var(--line)",
+          background: "linear-gradient(180deg, oklch(0.16 0.014 282 / 0.6), oklch(0.135 0.012 282 / 0.6))",
+          backdropFilter: "blur(12px)",
+          padding: "20px 14px",
+          display: "flex", flexDirection: "column", gap: 18,
+          overflowY: "auto",
+        }}
         className="hidden lg:flex"
       >
         <SidebarContents active={active} />
@@ -325,13 +465,13 @@ export function AppShell({
 
       {/* Main content */}
       <main style={{ paddingLeft: 0 }} className="lg:pl-66">
-        <div style={{
-          maxWidth: 1280, width: "100%", margin: "0 auto",
-          padding: "28px 40px 56px",
-        }}>
+        <div className="main-content">
           {children}
         </div>
       </main>
+
+      {/* Mobile bottom nav */}
+      <MobileBottomNav active={active} />
     </div>
   );
 }
