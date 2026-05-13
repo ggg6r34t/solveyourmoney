@@ -3,7 +3,10 @@ import {
   BudgetResponseSchema,
   BudgetResponse,
 } from "./budgetSchema";
+import { computeBudget } from "../budgetCalculations";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+const FALLBACK_INCOME = 0;
 
 export async function getBudgetData({
   userId,
@@ -18,7 +21,14 @@ export async function getBudgetData({
   const supabase = await createSupabaseServerClient();
 
   if (!supabase) {
-    return BudgetResponseSchema.parse({ userId, timestamp: now, categories: [] });
+    const categories: { id: string; label: string; allocated: number; spent: number }[] = [];
+    return BudgetResponseSchema.parse({
+      userId,
+      timestamp: now,
+      income: FALLBACK_INCOME,
+      categories,
+      computed: computeBudget(categories, FALLBACK_INCOME),
+    });
   }
 
   const today = new Date();
@@ -38,7 +48,14 @@ export async function getBudgetData({
     .order("created_at", { ascending: true });
 
   if (error || !data) {
-    return BudgetResponseSchema.parse({ userId, timestamp: now, categories: [] });
+    const categories: { id: string; label: string; allocated: number; spent: number }[] = [];
+    return BudgetResponseSchema.parse({
+      userId,
+      timestamp: now,
+      income: FALLBACK_INCOME,
+      categories,
+      computed: computeBudget(categories, FALLBACK_INCOME),
+    });
   }
 
   const categories = data.map((row) => ({
@@ -48,5 +65,11 @@ export async function getBudgetData({
     spent: Number(row.actual_amount),
   }));
 
-  return BudgetResponseSchema.parse({ userId, timestamp: now, categories });
+  return BudgetResponseSchema.parse({
+    userId,
+    timestamp: now,
+    income: FALLBACK_INCOME,
+    categories,
+    computed: computeBudget(categories, FALLBACK_INCOME),
+  });
 }
