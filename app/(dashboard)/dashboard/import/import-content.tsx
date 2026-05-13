@@ -144,9 +144,6 @@ function ImportRow({ f }: { f: ImportFile }) {
         <span className={`pill ${s.pill}`}>{s.icon} {s.label}{f.need ? ` · ${f.need}` : ""}</span>
       </td>
       <td className="muted f-sm">{f.when}</td>
-      <td style={{ textAlign: "right" }}>
-        <button className="btn sm ghost" type="button">{f.status === "review" ? "Review" : "Open"}</button>
-      </td>
     </tr>
   );
 }
@@ -322,12 +319,6 @@ export function ImportContent() {
           <div className="sub">Upload statements, CSVs, or screenshots. We turn them into clean transactions.</div>
         </div>
         <div className="row gap-8">
-          <button className="btn ghost" type="button">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>
-            </svg>
-            Connect a bank instead
-          </button>
           <button className="btn" type="button">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/>
@@ -456,7 +447,6 @@ export function ImportContent() {
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
                       Choose a file
                     </button>
-                    <button className="btn ghost" type="button">Paste from clipboard</button>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -558,10 +548,7 @@ export function ImportContent() {
       {/* Recent imports table */}
       <div className="section-hd">
         <h2>Recent imports</h2>
-        <div className="row gap-8">
-          <span className="muted f-xs">Last 30 days</span>
-          <button className="btn sm ghost" type="button">Export log</button>
-        </div>
+        <span className="muted f-xs">Last 30 days</span>
       </div>
       <div className="card flat" style={{ padding: 0, overflow: "hidden" }}>
         <table className="tbl">
@@ -573,7 +560,6 @@ export function ImportContent() {
               <th style={{ textAlign: "right" }}>Rows</th>
               <th>Status</th>
               <th>Imported</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
