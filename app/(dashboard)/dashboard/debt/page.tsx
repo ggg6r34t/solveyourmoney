@@ -13,7 +13,7 @@ export default async function DebtPage() {
     apr: parseFloat((d.interestRate * 100).toFixed(2)),
     balance: d.principal,
     min: d.minPayment,
-    paid: 50,
+    paid: 0,
     payoff: computed.debtFreeDate,
     issuer: "—",
     bg: ["oklch(0.68 0.15 24 / 0.18)", "oklch(0.66 0.18 282 / 0.18)", "oklch(0.80 0.13 82 / 0.18)"][i % 3],

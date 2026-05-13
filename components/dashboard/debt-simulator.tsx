@@ -40,7 +40,7 @@ function DebtCard({ d, extra }: { d: DebtItem; extra: number }) {
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 520, letterSpacing: "-0.015em" }}>{d.name}</div>
-            <div className="muted f-xs">{d.issuer} · •••• 4421</div>
+            <div className="muted f-xs">{d.issuer}</div>
           </div>
         </div>
         <div className="row gap-8">
