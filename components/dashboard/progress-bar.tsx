@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Tone } from "@/features/dashboard/mockData";
 
@@ -42,9 +45,11 @@ export function ProgressBar({
 
   return (
     <div className={cn("h-2 overflow-hidden rounded-full bg-track", className)}>
-      <div
+      <motion.div
         className={cn("h-full rounded-full", toneClass[tone])}
-        style={{ width: `${safeValue}%` }}
+        initial={{ width: "0%" }}
+        animate={{ width: `${safeValue}%` }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
       />
     </div>
   );
