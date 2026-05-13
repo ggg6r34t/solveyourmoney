@@ -1,8 +1,5 @@
-import {
-  LearnRequestSchema,
-  LearnResponseSchema,
-  LearnResponse,
-} from "./learnSchema";
+// features/learn/services/learnLiveService.ts
+import { LearnRequestSchema, LearnResponseSchema, LearnResponse } from "./learnSchema";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { lessonCatalog } from "../../dashboard/catalog";
 
@@ -14,7 +11,6 @@ export async function getLearnData({
   supabaseClient?: unknown;
 }): Promise<LearnResponse> {
   LearnRequestSchema.parse({ userId });
-
   const now = new Date().toISOString();
   const supabase = await createSupabaseServerClient();
 
@@ -28,9 +24,7 @@ export async function getLearnData({
       .not("completed_at", "is", null);
 
     if (data) {
-      for (const row of data) {
-        completedSlugs.add(row.slug as string);
-      }
+      for (const row of data) completedSlugs.add(row.slug as string);
     }
   }
 
@@ -43,7 +37,10 @@ export async function getLearnData({
     xpReward: item.xpReward,
   }));
 
-  const completedCount = lessons.filter((l) => l.completed).length;
-
-  return LearnResponseSchema.parse({ userId, timestamp: now, lessons, completedCount });
+  return LearnResponseSchema.parse({
+    userId,
+    timestamp: now,
+    lessons,
+    completedCount: completedSlugs.size,
+  });
 }
