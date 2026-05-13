@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Offline — SolveYourMoney</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #1c1826; color: #f5f4fa; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    body { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card {
+      background: #21202e;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 40px 32px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+    .mark {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(220deg, #5248d0, #7a78e8);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .mark-inner {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #21202e;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #f8f8ff; }
+    h1 { font-size: 20px; font-weight: 580; letter-spacing: -0.02em; margin-bottom: 10px; }
+    p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 24px; }
+    button {
+      background: linear-gradient(180deg, #6258e0, #4a40c8);
+      border: none; border-radius: 8px;
+      color: #fff; cursor: pointer;
+      font-size: 13px; font-weight: 500;
+      padding: 10px 22px;
+      transition: filter 120ms ease;
+    }
+    button:hover { filter: brightness(1.08); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark"><div class="mark-inner"><div class="dot"></div></div></div>
+    <h1>You&rsquo;re offline</h1>
+    <p>Your financial data requires a connection. Please reconnect and refresh to continue.</p>
+    <button onclick="location.reload()">Try again</button>
+  </div>
+</body>
+</html>
