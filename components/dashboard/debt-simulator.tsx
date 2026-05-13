@@ -157,7 +157,7 @@ export function DebtSimulator({ demoDebts }: { demoDebts: DebtItem[] }) {
         <h2>Upcoming payments</h2>
         <span className="sub">Next 4 weeks</span>
       </div>
-      <div className="card flat" style={{ padding: 0, overflow: "hidden" }}>
+      <div className="card flat" style={{ padding: 0, overflowX: "auto" }}>
         <table className="tbl">
           <thead>
             <tr>
