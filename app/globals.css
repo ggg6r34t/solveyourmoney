@@ -702,3 +702,72 @@ input[type="range"].slim::-moz-range-thumb {
     padding: 28px 40px 56px;
   }
 }
+
+/* ─── Responsive breakpoints ─── */
+
+/* Metrics grid: 4-col → 2-col at tablet, 1-col at mobile */
+@media (max-width: 1023px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 639px) {
+  .metrics { grid-template-columns: 1fr; }
+}
+
+/* Two-column grid: stack on mobile */
+@media (max-width: 767px) {
+  .g-2 { grid-template-columns: 1fr; }
+}
+
+/* Three-column grid: 2-col at tablet, 1-col at mobile */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .g-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 639px) {
+  .g-3 { grid-template-columns: 1fr; }
+}
+
+/* 12-column grid: collapse to 1-col on tablet/mobile.
+   !important needed to override inline gridColumn span styles
+   on child elements (e.g. DebtSimulator, LearnContent). */
+@media (max-width: 1023px) {
+  .g-12 { grid-template-columns: 1fr; }
+  .g-12 > * { grid-column: 1 / -1 !important; }
+}
+
+/* Metric value: smaller font on mobile */
+@media (max-width: 639px) {
+  .metric .val { font-size: 22px; }
+}
+
+/* Page header + greeting: stack on mobile */
+@media (max-width: 639px) {
+  .page-hd  { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .greeting { flex-direction: column; gap: 12px; }
+}
+
+/* Budget/categories table: hide progress column on mobile */
+@media (max-width: 640px) {
+  .tbl th:last-child,
+  .tbl td:last-child { display: none; }
+}
+
+/* Lesson rows: collapse to 3-col, hide time on mobile */
+@media (max-width: 640px) {
+  .lesson { grid-template-columns: 36px 1fr auto; }
+  .lesson .time { display: none; }
+}
+
+/* Segmented control: scrollable on mobile */
+@media (max-width: 640px) {
+  .seg { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* Body: slightly larger font on mobile for readability */
+@media (max-width: 639px) {
+  body { font-size: 15px; }
+}
+
+/* Safe-area body guard (fallback for edge cases outside the app shell) */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body { padding-bottom: env(safe-area-inset-bottom); }
+}
