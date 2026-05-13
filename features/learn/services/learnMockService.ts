@@ -13,5 +13,6 @@ export function getLearnData({ userId }: { userId: string }): LearnResponse {
     readingMinutes: item.readingMinutes,
     xpReward: item.xpReward,
   }));
-  return LearnResponseSchema.parse({ userId, timestamp: now, lessons, completedCount: 0 });
+  const completedCount = lessons.filter((l) => l.completed).length;
+  return LearnResponseSchema.parse({ userId, timestamp: now, lessons, completedCount });
 }

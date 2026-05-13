@@ -11,6 +11,7 @@ export function getSavingsData({ userId }: { userId: string }): SavingsResponse 
   ];
   const goals = rawGoals.map((g) => {
     const eta = goalEta(g, g.monthlyContribution);
+    // monthsRemaining omitted — etaDate is the consumer-facing string
     return { ...g, pctComplete: eta.pctComplete, remaining: eta.remaining, etaDate: eta.etaDate };
   });
   const computed = {
