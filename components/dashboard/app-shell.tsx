@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import { signOutAction } from "@/server/actions/auth";
 import { requireSession } from "@/server/dal/session";
+import { getGamificationData } from "@/features/gamification/services/gamificationService";
 import {
   LayoutDashboard,
   CreditCard,
@@ -55,15 +56,26 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
   let session: Awaited<ReturnType<typeof requireSession>> | null = null;
   try { session = await requireSession(); } catch {}
 
-  const userName  = session?.userId ? "Maya Aroon" : "Guest";
-  const userEmail = session?.userId ? "maya@protonmail.com" : "";
-  const initials  = userName.slice(0, 2).toUpperCase();
+  const userId = session?.userId;
+  const userName = session?.displayName ?? session?.email?.split("@")[0] ?? "Guest";
+  const userEmail = session?.email ?? "";
+  const initials = userName.slice(0, 2).toUpperCase();
 
-  const xp      = 940;
-  const xpMax   = 1200;
-  const level   = 4;
-  const streak  = 12;
-  const xpPct   = Math.round((xp / xpMax) * 100);
+  let xp = 0, xpMax = 250, level = 1, streak = 0, xpPct = 0;
+  let levelName = "Starter", nextLevelName: string | null = "Explorer";
+
+  if (userId) {
+    try {
+      const gam = await getGamificationData({ userId });
+      xp = gam.xp;
+      xpMax = gam.xpForNextLevel ?? (gam.xpForCurrentLevel + 1);
+      level = gam.level;
+      streak = gam.streak;
+      xpPct = gam.xpPct;
+      levelName = gam.levelName;
+      nextLevelName = gam.nextLevelName;
+    } catch {}
+  }
 
   return (
     <>
@@ -112,7 +124,7 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
               background: "var(--primary-glow)",
               boxShadow: "0 0 8px var(--primary-glow)",
             }} />
-            Level {level} · Steady
+            Level {level} · {levelName}
           </span>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 4,
@@ -149,8 +161,8 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
           display: "flex", justifyContent: "space-between", marginTop: 8,
           fontSize: 11, color: "var(--fg-mute)",
         }}>
-          <span>Next: <span style={{ color: "var(--fg-soft)" }}>Architect</span></span>
-          <span style={{ fontFamily: "var(--font-mono)" }}>+{xpMax - xp} to go</span>
+          <span>Next: <span style={{ color: "var(--fg-soft)" }}>{nextLevelName ?? "Max level"}</span></span>
+          <span style={{ fontFamily: "var(--font-mono)" }}>{xpMax > xp ? `+${xpMax - xp} to go` : "Legend"}</span>
         </div>
       </div>
 
