@@ -746,19 +746,19 @@ input[type="range"].slim::-moz-range-thumb {
 }
 
 /* Budget/categories table: hide progress column on mobile */
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .tbl th:last-child,
   .tbl td:last-child { display: none; }
 }
 
 /* Lesson rows: collapse to 3-col, hide time on mobile */
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .lesson { grid-template-columns: 36px 1fr auto; }
   .lesson .time { display: none; }
 }
 
 /* Segmented control: scrollable on mobile */
-@media (max-width: 640px) {
+@media (max-width: 639px) {
   .seg { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
 
