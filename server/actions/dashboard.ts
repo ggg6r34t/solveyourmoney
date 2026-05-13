@@ -7,6 +7,7 @@ import {
   expenseUpdateSchema,
   learningCompletionSchema,
   savingsContributionSchema,
+  savingsGoalSchema,
 } from "@/lib/validation/forms";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { captureServerEvent, events } from "@/observability/posthog";
@@ -279,4 +280,36 @@ function revalidateDashboard() {
   revalidatePath("/dashboard/budget");
   revalidatePath("/dashboard/savings");
   revalidatePath("/dashboard/learn");
+}
+
+export async function createSavingsGoal(input: {
+  name: string;
+  targetAmount: number;
+}): Promise<ActionResult> {
+  const session = await requireSession();
+  const parsed = savingsGoalSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, message: "Goal details need a second look before saving." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false, message: "Data storage is not configured yet." };
+  }
+
+  const { error } = await supabase.from("savings_goals").insert({
+    user_id: session.userId,
+    name: parsed.data.name,
+    target_amount: parsed.data.targetAmount,
+    saved_amount: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    return { ok: false, message: "We could not create this goal." };
+  }
+
+  revalidateDashboard();
+  return { ok: true, message: "Goal created." };
 }

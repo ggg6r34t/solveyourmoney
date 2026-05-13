@@ -56,3 +56,8 @@ export const expenseUpdateSchema = z.object({
 export const learningCompletionSchema = z.object({
   slug: z.string().min(2).max(120),
 });
+
+export const savingsGoalSchema = z.object({
+  name: z.string().min(2).max(120),
+  targetAmount: money.min(1),
+});
