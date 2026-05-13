@@ -40,14 +40,14 @@ export async function getDebtData({
     return { id: row.id as string, label: row.name as string, principal, interestRate, minPayment };
   });
 
-  const calc = avalanchePayoff(items, 0);
+  const payoffResult = avalanchePayoff(items, 0);
   const computed = {
     totalBalance: items.reduce((s, d) => s + d.principal, 0),
     totalMinPayment: items.reduce((s, d) => s + d.minPayment, 0),
-    totalInterest: calc.totalInterest,
-    debtFreeDate: calc.debtFreeDate,
-    monthsToPayoff: calc.monthsToPayoff,
-    avalancheOrder: calc.order,
+    totalInterest: payoffResult.totalInterest,
+    debtFreeDate: payoffResult.debtFreeDate,
+    monthsToPayoff: payoffResult.monthsToPayoff,
+    avalancheOrder: payoffResult.order,
   };
 
   return DebtResponseSchema.parse({ userId, timestamp: now, items, computed });

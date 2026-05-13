@@ -33,9 +33,7 @@ export async function getSavingsData({
   const goals = data.map((row) => {
     const target = Number(row.target_amount);
     const current = Number(row.saved_amount);
-    const monthlyContribution = Number(
-      row.monthly_contribution ?? Math.round(target * 0.05),
-    );
+    const monthlyContribution = Number(row.monthly_contribution ?? 0);
     const eta = goalEta({ target, current }, monthlyContribution);
     return {
       id: row.id as string,

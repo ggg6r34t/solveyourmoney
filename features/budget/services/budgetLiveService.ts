@@ -35,6 +35,9 @@ export async function getBudgetData({
       .order("created_at", { ascending: true }),
   ]);
 
+  if (profileResult.error && profileResult.error.code !== "PGRST116") {
+    return BudgetResponseSchema.parse({ userId, timestamp: now, income: 0, categories: [], computed: emptyComputed });
+  }
   const income = Number(profileResult.data?.monthly_income ?? 0);
 
   if (expensesResult.error || !expensesResult.data) {
