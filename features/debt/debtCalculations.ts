@@ -26,26 +26,26 @@ export function avalanchePayoff(
   const balances = sorted.map((d) => d.principal);
   let totalInterest = 0;
   let month = 0;
+  let freedMinPayments = 0; // accumulates freed minimums as debts pay off
   const MAX_MONTHS = 600;
 
   while (balances.some((b) => b > 0.01) && month < MAX_MONTHS) {
     month++;
-    let freed = 0;
 
     for (let i = 0; i < sorted.length; i++) {
-      if (balances[i] <= 0) continue;
+      if (balances[i] <= 0.01) continue;
       const interest = balances[i] * (sorted[i].interestRate / 12);
       totalInterest += interest;
       balances[i] += interest;
       const payment = Math.min(sorted[i].minPayment, balances[i]);
       balances[i] -= payment;
       if (balances[i] < 0.01) {
-        freed += balances[i];
+        freedMinPayments += sorted[i].minPayment; // free this minimum going forward
         balances[i] = 0;
       }
     }
 
-    let extra = extraPayment + freed;
+    let extra = extraPayment + freedMinPayments;
     for (let i = 0; i < sorted.length; i++) {
       if (balances[i] <= 0 || extra <= 0) continue;
       const applied = Math.min(extra, balances[i]);
