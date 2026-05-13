@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Sparkles, CreditCard, Coins, Settings, Check } from "lucide-react";
+import { Bell, Sparkles, CreditCard, Coins } from "lucide-react";
 
 type Kind = "bill" | "win" | "insight";
 type Filter = "all" | "unread" | "win" | "bill" | "insight";
@@ -30,21 +30,6 @@ const SEED: Notif[] = [
   { id: "n9", kind: "bill",    title: "Care Credit minimum due Jun 2",                body: "$45 · autopay scheduled.",                                                                day: "May 10",    time: "10:05 AM", read: true,  accent: "primary" },
 ];
 
-const CHANNEL_ROWS = [
-  { name: "Bill due",          on: ["push", "email"] },
-  { name: "Auto-payment",      on: ["push"] },
-  { name: "Big win / XP",      on: ["push"] },
-  { name: "Streak danger",     on: ["push"] },
-  { name: "Spending insight",  on: ["email"] },
-  { name: "Weekly digest",     on: ["email"] },
-  { name: "Security alerts",   on: ["push", "email", "sms"] },
-];
-
-const CHANNEL_COLS = [
-  { id: "push",  label: "Push" },
-  { id: "email", label: "Email" },
-  { id: "sms",   label: "SMS" },
-];
 
 const KIND_ICON: Record<Kind, React.FC<{ size?: number }>> = {
   bill:    CreditCard,
@@ -116,38 +101,6 @@ function NotifRow({
   );
 }
 
-function ChannelMatrix() {
-  return (
-    <div>
-      <div className="row" style={{ padding: "6px 0", fontSize: 11, color: "var(--fg-dim)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-        <span style={{ flex: 1 }} />
-        {CHANNEL_COLS.map((c) => (
-          <span key={c.id} style={{ width: 48, textAlign: "center" }}>{c.label}</span>
-        ))}
-      </div>
-      {CHANNEL_ROWS.map((r) => (
-        <div key={r.name} className="row" style={{ padding: "10px 0", borderTop: "1px solid var(--line)" }}>
-          <span className="f-sm" style={{ flex: 1 }}>{r.name}</span>
-          {CHANNEL_COLS.map((c) => {
-            const on = r.on.includes(c.id);
-            return (
-              <span key={c.id} style={{ width: 48, display: "grid", placeItems: "center" }}>
-                <span style={{
-                  width: 18, height: 18, borderRadius: 5,
-                  background: on ? "oklch(0.66 0.18 282 / 0.6)" : "oklch(1 0 0 / 0.04)",
-                  boxShadow: on ? "0 0 0 1px oklch(0.7 0.18 282)" : "0 0 0 1px var(--line)",
-                  display: "grid", placeItems: "center", color: "oklch(0.98 0 0)",
-                }}>
-                  {on && <Check size={11} />}
-                </span>
-              </span>
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function QuietBand({ from, to }: { from: number; to: number }) {
   const r = 56, cx = 80, cy = 80;
@@ -238,7 +191,6 @@ export function NotificationsContent() {
         </div>
         <div className="row gap-8">
           <button className="btn ghost" onClick={markAll}>Mark all read</button>
-          <button className="btn"><Settings size={13} /> Preferences</button>
         </div>
       </div>
 
@@ -318,15 +270,6 @@ export function NotificationsContent() {
 
         {/* Right panel */}
         <div style={{ gridColumn: "span 4", display: "flex", flexDirection: "column", gap: 14 }}>
-          {/* Channels */}
-          <div className="card">
-            <div className="card-head">
-              <div className="card-title">Channels</div>
-              <span className="muted f-xs">Per category</span>
-            </div>
-            <ChannelMatrix />
-          </div>
-
           {/* Quiet hours */}
           <div className="card">
             <div className="card-head">
