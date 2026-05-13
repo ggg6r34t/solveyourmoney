@@ -308,7 +308,8 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
   );
 }
 
-async function MobileTopBar({ active: _active }: { active: AppNavKey }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function MobileTopBar(_props: { active: AppNavKey }) {
   let session: Awaited<ReturnType<typeof requireSession>> | null = null;
   try { session = await requireSession(); } catch {}
 

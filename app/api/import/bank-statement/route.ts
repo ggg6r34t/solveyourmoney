@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
   if (!g.ImageData) g.ImageData = class {};
   if (!g.Path2D) g.Path2D = class {};
 
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const pdfParse = require("pdf-parse") as (
     buffer: Buffer,
   ) => Promise<{ text: string }>;
