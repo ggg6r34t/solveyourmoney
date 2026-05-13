@@ -74,7 +74,9 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
       xpPct = gam.xpPct;
       levelName = gam.levelName;
       nextLevelName = gam.nextLevelName;
-    } catch {}
+    } catch (err) {
+      console.error("[app-shell] Failed to load gamification data:", err);
+    }
   }
 
   return (

@@ -44,7 +44,7 @@ export const debtScenarioSchema = z.object({
 
 export const savingsContributionSchema = z.object({
   goalId: uuid,
-  amount: money,
+  amount: money.min(0.01),
 });
 
 export const expenseUpdateSchema = z.object({

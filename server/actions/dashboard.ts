@@ -124,6 +124,14 @@ export async function updateExpenseBudget(input: {
     metadata: { expense_id: parsed.data.id },
   });
 
+  await writeAuditLog({
+    actorId: session.userId,
+    action: "dashboard.expense_updated",
+    targetType: "expense",
+    targetId: parsed.data.id,
+    metadata: { planned: parsed.data.planned, actual: parsed.data.actual },
+  });
+
   revalidateDashboard();
   return { ok: true, message: "Budget updated." };
 }
