@@ -45,7 +45,6 @@ function DebtCard({ d, extra }: { d: DebtItem; extra: number }) {
         </div>
         <div className="row gap-8">
           <span className="pill" style={{ background: pillBg, color: pillColor }}>{d.apr}% APR</span>
-          <button className="btn sm ghost" type="button">Pay</button>
         </div>
       </div>
 
@@ -149,9 +148,6 @@ export function DebtSimulator({ demoDebts }: { demoDebts: DebtItem[] }) {
               (highest APR), then roll the freed payment into <b style={{ color: "var(--fg-soft)" }}>Care Credit</b>.
             </div>
 
-            <button className="btn primary" type="button" style={{ width: "100%", marginTop: 14, height: 36 }}>
-              Set ${extra}/mo as my plan
-            </button>
           </div>
         </div>
       </div>
