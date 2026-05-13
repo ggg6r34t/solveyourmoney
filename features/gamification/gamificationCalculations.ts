@@ -7,7 +7,7 @@ export type GamificationLevel = {
   level: number;
   name: string;
   xpForCurrentLevel: number;
-  xpForNextLevel: number;
+  xpForNextLevel: number | null;
   xpPct: number;
   nextLevelName: string | null;
 };
@@ -24,11 +24,10 @@ export function deriveLevel(xp: number): GamificationLevel {
   const level = idx + 1;
   const isMax = level === THRESHOLDS.length;
   const xpForCurrentLevel = THRESHOLDS[idx];
-  const xpForNextLevel = isMax ? 0 : THRESHOLDS[idx + 1];
-  const range = isMax ? 1 : xpForNextLevel - xpForCurrentLevel;
+  const xpForNextLevel: number | null = isMax ? null : THRESHOLDS[idx + 1];
   const xpPct = isMax
     ? 100
-    : Math.min(100, Math.round(((xp - xpForCurrentLevel) / range) * 100));
+    : Math.min(100, Math.round(((xp - xpForCurrentLevel) / (xpForNextLevel! - xpForCurrentLevel)) * 100));
   const nextLevelName = isMax ? null : NAMES[idx + 1];
 
   return {

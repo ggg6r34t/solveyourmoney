@@ -23,7 +23,7 @@ export function goalEta(
       : 0;
 
   if (remaining === 0) {
-    return { monthsRemaining: 0, etaDate: "Reached", pctComplete: 100, remaining: 0 };
+    return { monthsRemaining: 0, etaDate: "Reached", pctComplete, remaining: 0 };
   }
 
   if (monthlyContribution <= 0) {
