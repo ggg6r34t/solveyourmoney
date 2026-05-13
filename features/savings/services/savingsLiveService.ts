@@ -1,20 +1,7 @@
-import {
-  SavingsRequestSchema,
-  SavingsResponseSchema,
-  SavingsResponse,
-} from "./savingsSchema";
-import { goalEta } from "../savingsCalculations";
+// features/savings/services/savingsLiveService.ts
+import { SavingsRequestSchema, SavingsResponseSchema, SavingsResponse } from "./savingsSchema";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-function buildEmptyResponse(userId: string, now: string): SavingsResponse {
-  const goals: SavingsResponse["goals"] = [];
-  return SavingsResponseSchema.parse({
-    userId,
-    timestamp: now,
-    goals,
-    computed: { totalSaved: 0, totalTarget: 0, totalRemaining: 0, monthlyTotal: 0 },
-  });
-}
+import { goalEta } from "../savingsCalculations";
 
 export async function getSavingsData({
   userId,
@@ -24,12 +11,13 @@ export async function getSavingsData({
   supabaseClient?: unknown;
 }): Promise<SavingsResponse> {
   SavingsRequestSchema.parse({ userId });
-
   const now = new Date().toISOString();
   const supabase = await createSupabaseServerClient();
 
+  const emptyComputed = { totalSaved: 0, totalTarget: 0, totalRemaining: 0, monthlyTotal: 0 };
+
   if (!supabase) {
-    return buildEmptyResponse(userId, now);
+    return SavingsResponseSchema.parse({ userId, timestamp: now, goals: [], computed: emptyComputed });
   }
 
   const { data, error } = await supabase
@@ -39,13 +27,15 @@ export async function getSavingsData({
     .order("created_at", { ascending: true });
 
   if (error || !data) {
-    return buildEmptyResponse(userId, now);
+    return SavingsResponseSchema.parse({ userId, timestamp: now, goals: [], computed: emptyComputed });
   }
 
   const goals = data.map((row) => {
     const target = Number(row.target_amount);
     const current = Number(row.saved_amount);
-    const monthlyContribution = Number(row.monthly_contribution ?? 0);
+    const monthlyContribution = Number(
+      row.monthly_contribution ?? Math.round(target * 0.05),
+    );
     const eta = goalEta({ target, current }, monthlyContribution);
     return {
       id: row.id as string,
