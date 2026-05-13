@@ -332,3 +332,41 @@ export async function createSavingsGoal(input: {
   revalidateDashboard();
   return { ok: true, message: "Goal created." };
 }
+
+export async function updateProfileDisplayName(input: {
+  displayName: string;
+}): Promise<ActionResult> {
+  const session = await requireSession();
+
+  if (!input.displayName || input.displayName.trim().length < 2 || input.displayName.trim().length > 80) {
+    return { ok: false, message: "Display name must be 2–80 characters." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false, message: "Data storage is not configured yet." };
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ display_name: input.displayName.trim(), updated_at: new Date().toISOString() })
+    .eq("id", session.userId);
+
+  if (error) {
+    return { ok: false, message: "Profile could not be saved right now." };
+  }
+
+  // NOTE: captureServerEvent call OMITTED — events.profileUpdated not yet defined (Task 26)
+
+  await writeAuditLog({
+    actorId: session.userId,
+    action: "dashboard.profile_updated",
+    targetType: "profile",
+    targetId: session.userId,
+    metadata: {},
+  });
+
+  revalidatePath("/settings");
+  revalidatePath("/dashboard");
+  return { ok: true, message: "Profile updated." };
+}
