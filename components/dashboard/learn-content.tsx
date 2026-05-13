@@ -1,34 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import type { LearnResponse } from "@/features/learn/services/learnSchema";
+import { markLessonComplete } from "@/server/actions/dashboard";
+import { useRouter } from "next/navigation";
 
-type Lesson = {
-  n: string; state: "done" | "active" | "next" | "lock";
-  title: string; desc: string; xp: number; min: number; cat: string;
-  progress?: number;
-};
-
-const CATS = ["All", "Debt", "Saving", "Investing", "Taxes", "Mindset"] as const;
-
-const LESSONS: Lesson[] = [
-  { n: "01", state: "done",   title: "The shape of your money",       desc: "Net worth, the simplest possible version.",              xp: 50,  min: 6,  cat: "Mindset" },
-  { n: "02", state: "done",   title: "Interest, demystified",         desc: "Why APR moves your money faster than you think.",       xp: 80,  min: 9,  cat: "Debt" },
-  { n: "03", state: "done",   title: "Snowball vs Avalanche",         desc: "Two paths out of debt — which suits you?",              xp: 80,  min: 8,  cat: "Debt" },
-  { n: "04", state: "active", title: "Building a 3-month buffer",     desc: "How an emergency fund actually changes your life.",     xp: 100, min: 12, cat: "Saving", progress: 0.45 },
-  { n: "05", state: "next",   title: "Reading a credit report",       desc: "Spot what helps you, what hurts you.",                 xp: 90,  min: 10, cat: "Debt" },
-  { n: "06", state: "next",   title: "Spending without guilt",        desc: "A small framework for guilt-free wants.",              xp: 70,  min: 7,  cat: "Mindset" },
-  { n: "07", state: "lock",   title: "Index funds in plain English",  desc: "Unlocks at Level 5.",                                  xp: 120, min: 11, cat: "Investing" },
-  { n: "08", state: "lock",   title: "Tax-advantaged accounts",       desc: "Unlocks at Level 5.",                                  xp: 120, min: 13, cat: "Taxes" },
-];
-
-const BADGES = [
-  { name: "First Step",      sub: "Day 1 · earned",   locked: false },
-  { name: "Debt Slayer",     sub: "Apr 12 · earned",  locked: false },
-  { name: "Saver",           sub: "Apr 28 · earned",  locked: false },
-  { name: "Streak: 7 days",  sub: "May 6 · earned",   locked: false },
-  { name: "Streak: 30 days", sub: "18 days to go",    locked: true  },
-  { name: "Architect",       sub: "Level 5 unlock",   locked: true  },
-];
+type CatalogLesson = LearnResponse["lessons"][number];
 
 const CHECK_ICON = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -40,31 +17,37 @@ const LOCK_ICON = (
     <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
   </svg>
 );
-const LOCK_ICON_LG = (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-  </svg>
-);
 const FLAME_ICON = (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
   </svg>
 );
 
-function BadgeIcon({ name, locked }: { name: string; locked: boolean }) {
-  if (locked) return LOCK_ICON_LG;
-  const icons: Record<string, React.ReactNode> = {
-    "First Step":  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
-    "Debt Slayer": <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
-    "Saver":       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-    "Streak: 7 days": <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
-  };
-  return <>{icons[name] ?? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>}</>;
-}
+export function LearnContent({ initialLessons }: { initialLessons: CatalogLesson[] }) {
+  const [lessons, setLessons] = useState(initialLessons);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-export function LearnContent() {
-  const [cat, setCat] = useState<string>("All");
-  const visible = cat === "All" ? LESSONS : LESSONS.filter(l => l.cat === cat);
+  const CATS = ["All", ...Array.from(new Set(initialLessons.map((l) =>
+    l.category.charAt(0).toUpperCase() + l.category.slice(1)
+  )))];
+
+  const filtered = activeCategory === "All"
+    ? lessons
+    : lessons.filter((l) => l.category.toLowerCase() === activeCategory.toLowerCase());
+
+  const firstIncomplete = filtered.findIndex((l) => !l.completed);
+
+  function handleComplete(slug: string) {
+    startTransition(async () => {
+      await markLessonComplete({ slug });
+      setLessons((prev) =>
+        prev.map((l) => (l.id === slug ? { ...l, completed: true } : l))
+      );
+      router.refresh();
+    });
+  }
 
   const pct = 940 / 1200;
   const ringR = 38;
@@ -187,10 +170,10 @@ export function LearnContent() {
         <h2>Lessons</h2>
         <div className="row gap-8" style={{ flexWrap: "wrap" }}>
           {CATS.map(c => (
-            <button key={c} onClick={() => setCat(c)} type="button" className="pill" style={{
+            <button key={c} onClick={() => setActiveCategory(c)} type="button" className="pill" style={{
               cursor: "pointer", border: 0, font: "inherit",
-              background: cat === c ? "oklch(0.66 0.18 282 / 0.2)" : "oklch(1 0 0 / 0.05)",
-              color: cat === c ? "oklch(0.92 0.06 282)" : "var(--fg-soft)",
+              background: activeCategory === c ? "oklch(0.66 0.18 282 / 0.2)" : "oklch(1 0 0 / 0.05)",
+              color: activeCategory === c ? "oklch(0.92 0.06 282)" : "var(--fg-soft)",
               padding: "5px 12px", fontSize: 12, fontWeight: 500,
             }}>
               {c}
@@ -200,45 +183,33 @@ export function LearnContent() {
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {visible.map(l => {
-          const locked = l.state === "lock";
+        {filtered.map((l, idx) => {
+          const state = l.completed ? "done" : idx === firstIncomplete ? "active" : "next";
           return (
-            <div key={l.n} className={`lesson${l.state === "done" ? " done" : l.state === "active" ? " active" : ""}`}
-              style={locked ? { opacity: 0.6 } : undefined}>
+            <div key={l.id} className={`lesson${state === "done" ? " done" : state === "active" ? " active" : ""}`}>
               <div className="num">
-                {l.state === "done" ? CHECK_ICON : l.state === "lock" ? LOCK_ICON : l.n}
+                {state === "done" ? CHECK_ICON : state === "next" ? LOCK_ICON : String(idx + 1).padStart(2, "0")}
               </div>
               <div>
                 <div className="ttl">{l.title}</div>
-                <div className="desc">{l.desc}</div>
-                {l.state === "active" && l.progress !== undefined && (
-                  <div className="pb xp" style={{ marginTop: 8, maxWidth: 300 }}>
-                    <i style={{ width: `${l.progress * 100}%` }} />
-                  </div>
+                <div className="desc">{l.category.charAt(0).toUpperCase() + l.category.slice(1)}</div>
+                {state === "active" && (
+                  <button
+                    className="btn primary"
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => handleComplete(l.id)}
+                    style={{ fontSize: 12, padding: "4px 10px" }}
+                  >
+                    Mark complete
+                  </button>
                 )}
               </div>
-              <span className="time">{l.min} min</span>
-              <span className="xp-pill">+{l.xp} XP</span>
+              <span className="time">{l.readingMinutes} min</span>
+              <span className="xp-pill">+{l.xpReward} XP</span>
             </div>
           );
         })}
-      </div>
-
-      {/* Badges */}
-      <div className="section-hd">
-        <h2>Badges</h2>
-        <span className="sub">7 of 14 earned</span>
-      </div>
-      <div className="g-3" style={{ gridTemplateColumns: "repeat(6, 1fr)" }}>
-        {BADGES.map(b => (
-          <div key={b.name} className={`badge-card${b.locked ? " locked" : ""}`}>
-            <div className="badge-emblem">
-              <BadgeIcon name={b.name} locked={b.locked} />
-            </div>
-            <div className="badge-name">{b.name}</div>
-            <div className="badge-meta">{b.sub}</div>
-          </div>
-        ))}
       </div>
     </>
   );
