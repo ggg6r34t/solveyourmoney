@@ -40,15 +40,15 @@ type NavItem = {
 
 const primaryNav: NavItem[] = [
   { id: "overview", label: "Overview",  href: "/dashboard",         Icon: LayoutDashboard },
-  { id: "debt",     label: "Debt",      href: "/dashboard/debt",    Icon: CreditCard,      count: "3" },
+  { id: "debt",     label: "Debt",      href: "/dashboard/debt",    Icon: CreditCard },
   { id: "budget",   label: "Budget",    href: "/dashboard/budget",  Icon: PieChart },
   { id: "savings",  label: "Savings",   href: "/dashboard/savings", Icon: Target },
-  { id: "learn",    label: "Learn",     href: "/dashboard/learn",   Icon: BookOpen,        count: "4" },
+  { id: "learn",    label: "Learn",     href: "/dashboard/learn",   Icon: BookOpen },
   { id: "import",   label: "Import",    href: "/dashboard/import",  Icon: Upload },
 ];
 
 const accountNav: NavItem[] = [
-  { id: "notifications",  label: "Notifications",  href: "/dashboard/notifications",     Icon: Bell, count: "2" },
+  { id: "notifications",  label: "Notifications",  href: "/dashboard/notifications",     Icon: Bell },
   { id: "settings",       label: "Settings",       href: "/settings",                    Icon: Settings },
 ];
 
