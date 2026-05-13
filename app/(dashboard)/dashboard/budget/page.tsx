@@ -2,6 +2,7 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { getBudgetData } from "@/features/budget/services/budgetService";
 import { requireSession } from "@/server/dal/session";
 import { formatCurrency } from "@/lib/format";
+import { captureServerEvent, events } from "@/observability/posthog";
 
 function CategoryRow({ c }: { c: { label: string; allocated: number; spent: number } }) {
   const pct = c.allocated > 0 ? Math.round((c.spent / c.allocated) * 100) : 0;
@@ -26,6 +27,7 @@ function CategoryRow({ c }: { c: { label: string; allocated: number; spent: numb
 
 export default async function BudgetPage() {
   const session = await requireSession();
+  await captureServerEvent({ distinctId: session.userId, event: events.budgetPageViewed, properties: {} });
   const { income, categories, computed } = await getBudgetData({ userId: session.userId });
 
   const today = new Date();

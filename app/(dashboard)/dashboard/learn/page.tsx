@@ -2,9 +2,11 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { LearnContent } from "@/components/dashboard/learn-content";
 import { getLearnData } from "@/features/learn/services/learnService";
 import { requireSession } from "@/server/dal/session";
+import { captureServerEvent, events } from "@/observability/posthog";
 
 export default async function LearnPage() {
   const session = await requireSession();
+  await captureServerEvent({ distinctId: session.userId, event: events.learnPageViewed, properties: {} });
   const learnData = await getLearnData({ userId: session.userId });
 
   return (

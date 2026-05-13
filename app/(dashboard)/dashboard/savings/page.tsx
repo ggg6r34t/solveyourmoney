@@ -2,6 +2,7 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { getSavingsData } from "@/features/savings/services/savingsService";
 import { requireSession } from "@/server/dal/session";
 import { formatCurrency } from "@/lib/format";
+import { captureServerEvent, events } from "@/observability/posthog";
 import { AddMoneyForm } from "@/components/dashboard/add-money-form";
 import { SavingsGoalForm } from "@/components/dashboard/savings-goal-form";
 import type { SavingsResponse } from "@/features/savings/services/savingsSchema";
@@ -61,6 +62,7 @@ function GoalCard({ g, idx }: { g: SavingsGoal; idx: number }) {
 
 export default async function SavingsPage() {
   const session = await requireSession();
+  await captureServerEvent({ distinctId: session.userId, event: events.savingsPageViewed, properties: {} });
   const { goals, computed } = await getSavingsData({ userId: session.userId });
 
   return (

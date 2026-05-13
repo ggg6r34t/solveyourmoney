@@ -13,6 +13,13 @@ export const events = {
   planEngaged: "plan_engaged",
   learningCompleted: "learning_completed",
   upgradeIntentClicked: "upgrade_intent_clicked",
+  // Added for MVP completeness
+  goalCreated: "goal_created",
+  profileUpdated: "profile_updated",
+  debtPageViewed: "debt_page_viewed",
+  budgetPageViewed: "budget_page_viewed",
+  savingsPageViewed: "savings_page_viewed",
+  learnPageViewed: "learn_page_viewed",
 } as const;
 
 export type AnalyticsEventName = (typeof events)[keyof typeof events];

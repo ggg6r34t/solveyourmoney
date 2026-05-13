@@ -329,6 +329,12 @@ export async function createSavingsGoal(input: {
     metadata: { name: parsed.data.name, target: parsed.data.targetAmount },
   });
 
+  await captureServerEvent({
+    distinctId: session.userId,
+    event: events.goalCreated,
+    properties: { name: parsed.data.name, target: parsed.data.targetAmount },
+  });
+
   revalidateDashboard();
   return { ok: true, message: "Goal created." };
 }
@@ -356,14 +362,18 @@ export async function updateProfileDisplayName(input: {
     return { ok: false, message: "Profile could not be saved right now." };
   }
 
-  // NOTE: captureServerEvent call OMITTED — events.profileUpdated not yet defined (Task 26)
-
   await writeAuditLog({
     actorId: session.userId,
     action: "dashboard.profile_updated",
     targetType: "profile",
     targetId: session.userId,
     metadata: {},
+  });
+
+  await captureServerEvent({
+    distinctId: session.userId,
+    event: events.profileUpdated,
+    properties: {},
   });
 
   revalidatePath("/settings");

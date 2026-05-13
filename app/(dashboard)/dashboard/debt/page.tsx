@@ -3,9 +3,11 @@ import { DebtSimulator } from "@/components/dashboard/debt-simulator";
 import { getDebtData } from "@/features/debt/services/debtService";
 import { requireSession } from "@/server/dal/session";
 import { formatCurrency } from "@/lib/format";
+import { captureServerEvent, events } from "@/observability/posthog";
 
 export default async function DebtPage() {
   const session = await requireSession();
+  await captureServerEvent({ distinctId: session.userId, event: events.debtPageViewed, properties: {} });
   const { items, computed } = await getDebtData({ userId: session.userId });
 
   const debts = items.map((d, i) => ({
