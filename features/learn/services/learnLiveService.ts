@@ -38,7 +38,12 @@ export async function getLearnData({
     id: item.slug,
     title: item.title,
     completed: completedSlugs.has(item.slug),
+    category: item.category,
+    readingMinutes: item.readingMinutes,
+    xpReward: item.xpReward,
   }));
 
-  return LearnResponseSchema.parse({ userId, timestamp: now, lessons });
+  const completedCount = lessons.filter((l) => l.completed).length;
+
+  return LearnResponseSchema.parse({ userId, timestamp: now, lessons, completedCount });
 }
