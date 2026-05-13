@@ -1,3 +1,4 @@
+import { cache } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { signOutAction } from "@/server/actions/auth";
@@ -15,6 +16,8 @@ import {
   Flame,
   LogOut,
 } from "lucide-react";
+
+const getGamificationDataCached = cache(getGamificationData);
 
 export type AppNavKey =
   | "overview"
@@ -74,7 +77,7 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
 
   if (userId) {
     try {
-      const gam = await getGamificationData({ userId });
+      const gam = await getGamificationDataCached({ userId });
       xp = gam.xp;
       xpMax = gam.xpForNextLevel ?? (gam.xpForCurrentLevel + 1);
       level = gam.level;
@@ -305,7 +308,7 @@ async function SidebarContents({ active }: { active: AppNavKey }) {
   );
 }
 
-async function MobileTopBar({ active }: { active: AppNavKey }) {
+async function MobileTopBar({ active: _active }: { active: AppNavKey }) {
   let session: Awaited<ReturnType<typeof requireSession>> | null = null;
   try { session = await requireSession(); } catch {}
 
@@ -314,7 +317,7 @@ async function MobileTopBar({ active }: { active: AppNavKey }) {
 
   if (userId) {
     try {
-      const gam = await getGamificationData({ userId });
+      const gam = await getGamificationDataCached({ userId });
       level = gam.level;
       streak = gam.streak;
       levelName = gam.levelName;
