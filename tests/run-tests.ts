@@ -236,6 +236,109 @@ async function runTests() {
     assert(one[0].amount === 3.5, "parseBankStatement: correct amount");
   }
 
+  // Test: avalanchePayoff — empty debts
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "debt", "debtCalculations.ts"),
+    );
+    const empty = calc.avalanchePayoff([], 0);
+    assert(empty.totalInterest === 0, "avalanchePayoff: empty → 0 interest");
+    assert(empty.debtFreeDate === "—", "avalanchePayoff: empty → '—' date");
+    assert(empty.order.length === 0, "avalanchePayoff: empty → empty order");
+  }
+
+  // Test: avalanchePayoff — single debt pays off
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "debt", "debtCalculations.ts"),
+    );
+    const debts = [{ id: "d1", principal: 1200, interestRate: 0.12, minPayment: 100 }];
+    const result = calc.avalanchePayoff(debts, 0);
+    assert(result.monthsToPayoff > 0, "avalanchePayoff: single debt payoff > 0 months");
+    assert(result.totalInterest > 0, "avalanchePayoff: single debt total interest > 0");
+    assert(result.order[0] === "d1", "avalanchePayoff: single debt order correct");
+  }
+
+  // Test: avalanchePayoff — high-rate debt paid first
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "debt", "debtCalculations.ts"),
+    );
+    const debts = [
+      { id: "low", principal: 500, interestRate: 0.05, minPayment: 25 },
+      { id: "high", principal: 500, interestRate: 0.20, minPayment: 25 },
+    ];
+    const result = calc.avalanchePayoff(debts, 0);
+    assert(result.order[0] === "high", "avalanchePayoff: highest rate paid first");
+  }
+
+  // Test: computeBudget
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "budget", "budgetCalculations.ts"),
+    );
+    const result = calc.computeBudget([{ allocated: 500, spent: 300 }], 1000);
+    assert(result.totalSpent === 300, "computeBudget: totalSpent correct");
+    assert(result.surplusDeficit === 700, "computeBudget: surplus correct");
+    assert(result.percentSpent === 30, "computeBudget: percentSpent correct");
+
+    const zero = calc.computeBudget([], 0);
+    assert(zero.percentSpent === 0, "computeBudget: zero income = 0 percentSpent");
+  }
+
+  // Test: goalEta
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "savings", "savingsCalculations.ts"),
+    );
+    const reached = calc.goalEta({ target: 1000, current: 1000 }, 100);
+    assert(reached.pctComplete === 100, "goalEta: reached → 100%");
+    assert(reached.etaDate === "Reached", "goalEta: reached → 'Reached'");
+
+    const noContrib = calc.goalEta({ target: 1000, current: 500 }, 0);
+    assert(noContrib.monthsRemaining === -1, "goalEta: no contribution → -1 months");
+
+    const active = calc.goalEta({ target: 1200, current: 0 }, 100);
+    assert(active.monthsRemaining === 12, "goalEta: 1200 / 100 = 12 months");
+  }
+
+  // Test: deriveLevel
+  {
+    const calc = requireFresh(
+      path.join(__dirname, "..", "features", "gamification", "gamificationCalculations.ts"),
+    );
+    const starter = calc.deriveLevel(0);
+    assert(starter.level === 1, "deriveLevel: 0 XP = level 1");
+    assert(starter.name === "Starter", "deriveLevel: 0 XP = Starter");
+
+    const steady = calc.deriveLevel(940);
+    assert(steady.level === 3, "deriveLevel: 940 XP = level 3");
+    assert(steady.name === "Steady", "deriveLevel: 940 XP = Steady");
+
+    const legend = calc.deriveLevel(3500);
+    assert(legend.level === 6, "deriveLevel: 3500 XP = level 6");
+    assert(legend.name === "Legend", "deriveLevel: max level");
+    assert(legend.nextLevelName === null, "deriveLevel: max level nextLevelName = null");
+    assert(legend.xpPct === 100, "deriveLevel: max level xpPct = 100");
+  }
+
+  // Test: gamification mock service schema validation
+  resetEnv();
+  process.env.NEXT_PUBLIC_APP_ENV = "local";
+  process.env.NEXT_PUBLIC_USE_MOCK_DATA = "true";
+  {
+    const mock = requireFresh(
+      path.join(__dirname, "..", "features", "gamification", "services", "gamificationMockService.ts"),
+    );
+    const schema = requireFresh(
+      path.join(__dirname, "..", "features", "gamification", "services", "gamificationSchema.ts"),
+    );
+    const mockRes = mock.getGamificationData({ userId: "user-1" });
+    schema.GamificationResponseSchema.parse(mockRes);
+    assert(mockRes.level >= 1 && mockRes.level <= 6, "gamification mock: level in range 1-6");
+    assert(mockRes.xpPct >= 0 && mockRes.xpPct <= 100, "gamification mock: xpPct in range 0-100");
+  }
+
   console.log("All tests passed (lightweight)");
 }
 
