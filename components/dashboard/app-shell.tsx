@@ -373,7 +373,7 @@ async function MobileTopBar({ active }: { active: AppNavKey }) {
               background: "var(--primary-glow)",
               boxShadow: "0 0 6px var(--primary-glow)",
             }} />
-            Lv {level} · {levelName}
+            Level {level} · {levelName}
           </span>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 4,
@@ -381,7 +381,7 @@ async function MobileTopBar({ active }: { active: AppNavKey }) {
             color: "var(--streak)",
           }}>
             <Flame size={11} />
-            {streak}d
+            {streak} day
           </span>
         </div>
       </div>
