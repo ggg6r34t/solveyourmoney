@@ -2,7 +2,7 @@
 const CACHE = 'sym-static-v1';
 const STATIC_PREFIXES = ['/_next/static/', '/fonts/', '/icons/'];
 const STATIC_EXACT = ['/manifest.webmanifest', '/offline.html'];
-const PRIVATE_SEGMENTS = ['/api/', '/dashboard', '/settings', '/onboarding', '/plan', '/guidance'];
+const PRIVATE_SEGMENTS = ['/api/', '/dashboard', '/settings', '/onboarding', '/plan', '/guidance', '/admin'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
