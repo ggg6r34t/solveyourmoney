@@ -153,7 +153,7 @@ export default async function DashboardPage() {
 
       {/* Hero chart */}
       <div className="g-12" style={{ marginTop: 16 }}>
-        <div className="card hero-chart-card" style={{ gridColumn: "span 12" }}>
+        <div className="card hero-chart-card">
           <div className="card-head">
             <div>
               <div className="card-title">Savings trajectory</div>

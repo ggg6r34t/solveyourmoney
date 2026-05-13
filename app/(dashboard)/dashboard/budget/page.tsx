@@ -152,7 +152,7 @@ export default async function BudgetPage() {
           <div className="muted f-sm">Import transactions to populate your budget automatically.</div>
         </div>
       ) : (
-        <div className="card flat" style={{ padding: "4px 4px", overflow: "hidden" }}>
+        <div className="card flat" style={{ padding: "4px 4px", overflowX: "auto" }}>
           <table className="tbl">
             <thead>
               <tr>
