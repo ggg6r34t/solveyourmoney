@@ -80,7 +80,7 @@ All five feature live services (`debtLiveService`, `budgetLiveService`, `savings
 All five live services type `supabaseClient` as `unknown`. Change to `SupabaseClient` from `@supabase/supabase-js`. Import: `import type { SupabaseClient } from '@supabase/supabase-js'`.
 
 **Fix 2 — Missing `financial_profiles` row:**  
-A new user who completes onboarding may have no `financial_profiles` row. The overview and learn live services must handle `null` from `.maybeSingle()` gracefully — return zero-valued defaults (`monthly_income: 0`, `level_xp: 0`, `streak_days: 0`) rather than throwing. Use `upsert` with default values on first read if the row is missing.
+A new user who completes onboarding may have no `financial_profiles` row. The overview and learn live services must handle `null` from `.maybeSingle()` gracefully — return zero-valued defaults (`monthly_income: 0`, `level_xp: 0`, `streak_days: 0`) rather than throwing. Use `upsert` with default values inside the overview live service itself — the service upserts the row as part of its own read path, not as a separate action, so the row always exists after the first dashboard load.
 
 **Fix 3 — `learning_progress` column name mismatch:**  
 `server/actions/dashboard.ts:markLessonComplete` inserts `xp_reward: 80` but the migration defines the column as `xp`. Supabase silently ignores unknown columns, so every lesson completion writes `xp: 0`. Fix:

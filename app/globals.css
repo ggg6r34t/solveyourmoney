@@ -4,27 +4,27 @@
   --background: #050812;
   --foreground: #f8fbff;
   --surface: #0b101c;
-  --surface-elevated: #111724;
+  --surface-elevated: #0f1522;
   --surface-muted: #171d2b;
   --surface-contrast: #1f293b;
   --surface-success: #082d25;
   --sidebar: #0c111d;
   --panel: #111724;
   --panel-soft: #1a2030;
-  --track: #2b3244;
-  --ink-muted: #8d99ae;
+  --track: #1e2535;
+  --ink-muted: #7a8698;
   --ink-soft: #5f6b82;
-  --border: #293244;
+  --border: #1d2438;
   --border-strong: #394255;
   --ring: #9b6cff;
   --primary: #8b5cf6;
   --primary-strong: #6d3ee5;
   --primary-soft: #271f49;
-  --accent: #10c987;
+  --accent: #0fb97c;
   --accent-strong: #11e2a0;
   --warning: #f8b21a;
   --warning-soft: #382b0d;
-  --danger: #ff3d55;
+  --danger: #f04e5e;
   --danger-soft: #39121d;
   --info: #24d4e8;
   --xp: #9b6cff;
@@ -79,7 +79,7 @@
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
-  --font-sans: "Aptos", "Segoe UI Variable Display", "Trebuchet MS", sans-serif;
+  --font-sans: var(--font-geist, "Segoe UI Variable Display", system-ui, sans-serif);
   --font-mono: "Cascadia Code", "SFMono-Regular", monospace;
 }
 

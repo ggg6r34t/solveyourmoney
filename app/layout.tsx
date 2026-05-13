@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Geist } from "next/font/google";
 import { AppProviders } from "./providers";
 import "./globals.css";
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://solveyourmoney.com"),
@@ -39,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="h-full antialiased"
+      className={`h-full antialiased ${geist.variable}`}
     >
       <body className="min-h-full">
         <AppProviders>{children}</AppProviders>
