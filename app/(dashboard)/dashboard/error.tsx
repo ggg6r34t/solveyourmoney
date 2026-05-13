@@ -1,23 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { RecoverableErrorState } from "@/components/dashboard/states";
+import { AppShell } from "@/components/dashboard/app-shell";
 
-export default function Error({
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+export default function DashboardError({ error, reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="p-4 sm:p-6">
-      <RecoverableErrorState
-        title="The dashboard could not load cleanly"
-        description="Your financial data stays protected. This is a rendering problem, not a leak. Try reloading the dashboard state."
-      />
-      <Button className="mt-4" onClick={reset}>
-        Try again
-      </Button>
-    </div>
+    <AppShell active="overview">
+      <div className="card" style={{ padding: 32, textAlign: "center" }}>
+        <div className="card-title" style={{ marginBottom: 8 }}>Something went wrong</div>
+        <div className="muted f-sm" style={{ marginBottom: 16 }}>{error.message}</div>
+        <button className="btn primary" onClick={reset}>Try again</button>
+      </div>
+    </AppShell>
   );
 }
