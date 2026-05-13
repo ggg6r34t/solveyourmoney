@@ -6,19 +6,36 @@ export function PageShell({
   title,
   subtitle,
   children,
+  actions,
 }: {
   active: AppNavKey;
   title: string;
   subtitle: string;
   children: React.ReactNode;
+  actions?: React.ReactNode;
 }) {
   return (
     <AppShell active={active}>
-      <header className="mb-6">
-        <h1 className="text-3xl font-black tracking-[-0.04em] text-white">
-          {title}
-        </h1>
-        <p className="mt-1 text-base font-semibold text-muted">{subtitle}</p>
+      <header style={{
+        display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+        gap: 24, marginBottom: 28,
+      }}>
+        <div>
+          <h1 style={{
+            fontSize: 28, fontWeight: 540, letterSpacing: "-0.025em",
+            margin: "0 0 4px", color: "var(--fg)",
+          }}>
+            {title}
+          </h1>
+          <p style={{ fontSize: 14, color: "var(--fg-mute)", margin: 0 }}>
+            {subtitle}
+          </p>
+        </div>
+        {actions && (
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+            {actions}
+          </div>
+        )}
       </header>
       {children}
     </AppShell>

@@ -1,91 +1,286 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { ButtonLink } from "@/components/ui/button";
-import { Card, Eyebrow } from "@/components/ui/card";
-import { WaitlistForm } from "@/components/forms/waitlist-form";
+
+function MiniProgressBar({ value, tone }: { value: number; tone: "primary" | "success" | "warning" | "danger" }) {
+  const fill = {
+    primary: "linear-gradient(90deg, oklch(0.66 0.18 282), oklch(0.78 0.14 250))",
+    success: "oklch(0.73 0.13 152)",
+    warning: "oklch(0.80 0.13 82)",
+    danger:  "oklch(0.68 0.15 24)",
+  }[tone];
+  return (
+    <div style={{ height: 6, borderRadius: 999, background: "oklch(1 0 0 / 0.06)", overflow: "hidden" }}>
+      <div style={{ width: `${value}%`, height: "100%", borderRadius: 999, background: fill }} />
+    </div>
+  );
+}
 
 export function Hero() {
   return (
-    <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-16 pt-10 md:grid-cols-[0.98fr_1.02fr] md:items-center md:pb-24 md:pt-16">
+    <section style={{
+      maxWidth: 1280, margin: "0 auto",
+      padding: "60px 40px 80px",
+      display: "grid", gap: 64,
+      alignItems: "center",
+    }}
+      className="md:grid-cols-[1fr_1fr]"
+    >
+      {/* Left: copy */}
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.65 }}
-        className="space-y-7"
+        transition={{ duration: 0.65, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{ display: "flex", flexDirection: "column", gap: 28 }}
       >
-        <div className="inline-flex rounded-full border border-primary/12 bg-white/72 px-4 py-2 text-sm font-black text-primary shadow-[var(--shadow-soft)]">
-          Financial coaching software, not a bank.
+        {/* Eyebrow */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          padding: "6px 12px", borderRadius: 999,
+          background: "oklch(0.66 0.18 282 / 0.10)",
+          boxShadow: "0 0 0 1px oklch(0.66 0.18 282 / 0.25)",
+          fontSize: 12, fontWeight: 500,
+          color: "oklch(0.85 0.10 282)",
+          width: "fit-content",
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: "50%",
+            background: "var(--primary-glow)",
+            boxShadow: "0 0 8px var(--primary-glow)",
+          }} />
+          Financial clarity · Not a bank
         </div>
-        <Eyebrow>Money decisions, minus the dread</Eyebrow>
-        <h1 className="max-w-4xl text-6xl font-black leading-[0.9] tracking-[-0.075em] text-foreground md:text-8xl">
-          Get clear
-          <br />
-          with money.
-        </h1>
-        <p className="max-w-2xl text-xl font-semibold leading-9 text-muted">
-          A premium financial clarity tool that turns debt, spending, savings,
-          and goals into scenarios you can understand at a glance.
-        </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <ButtonLink href="/sign-up">Start free</ButtonLink>
-          <ButtonLink href="/how-it-works" variant="secondary">
-            How it works
-          </ButtonLink>
+
+        {/* Headline */}
+        <div>
+          <h1 style={{
+            fontSize: "clamp(44px, 6vw, 72px)",
+            fontWeight: 540,
+            letterSpacing: "-0.035em",
+            lineHeight: 1.0,
+            margin: 0,
+            color: "var(--fg)",
+          }}>
+            Stop avoiding
+            <br />
+            <span style={{
+              background: "linear-gradient(135deg, oklch(0.78 0.16 282), oklch(0.78 0.14 250))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}>
+              your money.
+            </span>
+          </h1>
+          <p style={{
+            maxWidth: 440,
+            marginTop: 20, marginBottom: 0,
+            fontSize: 18, fontWeight: 400, lineHeight: 1.65,
+            color: "var(--fg-mute)",
+            letterSpacing: "-0.01em",
+          }}>
+            A calm financial clarity tool that turns debt, spending, and savings into
+            a clear picture you can actually act on.
+          </p>
         </div>
-        <WaitlistForm />
-        <p className="max-w-xl text-sm font-semibold leading-6 text-soft">
-          No bank connection in v1. No judgment. Just a clearer way to compare
-          what your money could support next.
-        </p>
+
+        {/* CTAs */}
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <Link
+            href="/sign-up"
+            style={{
+              height: 42, padding: "0 22px", display: "inline-flex",
+              alignItems: "center", borderRadius: 10,
+              fontSize: 14, fontWeight: 500,
+              color: "oklch(0.98 0 0)", textDecoration: "none",
+              background: "linear-gradient(180deg, oklch(0.7 0.18 282), oklch(0.58 0.18 282))",
+              boxShadow: "0 0 0 1px oklch(0.7 0.18 282), 0 8px 20px -8px oklch(0.66 0.18 282 / 0.7), 0 1px 0 oklch(1 0 0 / 0.18) inset",
+            }}
+          >
+            Start free — takes 2 min
+          </Link>
+          <Link
+            href="/how-it-works"
+            style={{
+              height: 42, padding: "0 18px", display: "inline-flex",
+              alignItems: "center", borderRadius: 10,
+              fontSize: 14, fontWeight: 500,
+              color: "var(--fg-soft)", textDecoration: "none",
+              background: "transparent",
+              boxShadow: "0 0 0 1px var(--line)",
+            }}
+          >
+            See how it works →
+          </Link>
+        </div>
+
+        {/* Trust */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 16,
+          fontSize: 12.5, color: "var(--fg-dim)",
+        }}>
+          {["No bank connection in v1", "No judgment", "Cancel anytime"].map((s, i) => (
+            <span key={s} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              {i > 0 && <span style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--fg-dim)" }} />}
+              {s}
+            </span>
+          ))}
+        </div>
       </motion.div>
+
+      {/* Right: product mockup */}
       <motion.div
-        initial={{ opacity: 0, rotate: -1.5, scale: 0.96 }}
-        animate={{ opacity: 1, rotate: 0, scale: 1 }}
-        transition={{ duration: 0.7, delay: 0.12 }}
-        className="relative"
+        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{ position: "relative" }}
       >
-        <div className="playful-blob absolute -right-8 -top-10 h-40 w-40 bg-xp/20" />
-        <div className="playful-blob absolute -bottom-10 -left-8 h-48 w-48 bg-accent/16" />
-        <Card className="relative overflow-hidden p-5 sm:p-8">
-          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-surface-strong/70 blur-3xl" />
-          <div className="relative space-y-5">
-            <div className="marketing-hero-panel rounded-[2rem] p-6 text-white">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-white/70">
-                Today&apos;s scenario
-              </p>
-              <h2 className="mt-3 text-4xl font-black tracking-[-0.05em]">
-                Explore how one month of breathing room could change the picture.
-              </h2>
-              <p className="mt-4 text-sm font-semibold leading-6 text-white/78">
-                Compare what happens if the next extra amount goes toward your
-                buffer before being spread across everything at once.
-              </p>
-            </div>
-            {[
-              ["Ready to use", "EUR 420", "Visible"],
-              ["Debt pressure", "14%", "Trackable"],
-              ["Runway", "1.8 months", "Growing"],
-            ].map(([label, value, status]) => (
-              <div
-                className="dashboard-card-soft flex items-center justify-between rounded-[1.75rem] p-4 transition hover:-translate-y-0.5"
-                key={label}
-              >
-                <div>
-                  <p className="text-sm font-bold text-muted">{label}</p>
-                  <p className="text-2xl font-black tracking-tight">{value}</p>
-                </div>
-                <span className="status-pill" data-tone="primary">
-                  {status}
-                </span>
+        {/* Ambient glow */}
+        <div style={{
+          position: "absolute", inset: -40,
+          background: "radial-gradient(ellipse at 60% 40%, oklch(0.66 0.18 282 / 0.15), transparent 60%)",
+          pointerEvents: "none", zIndex: 0,
+        }} />
+
+        {/* Mock dashboard card */}
+        <div style={{
+          position: "relative", zIndex: 1,
+          borderRadius: "var(--r-xl)",
+          background: "var(--bg-1)",
+          boxShadow: "0 0 0 1px var(--line), 0 1px 0 var(--inner-hl) inset, 0 40px 80px -20px oklch(0 0 0 / 0.7)",
+          overflow: "hidden",
+          padding: 24,
+        }}>
+          {/* Inner glow */}
+          <div style={{
+            position: "absolute", top: 0, right: 0,
+            width: 300, height: 200,
+            background: "radial-gradient(circle at 80% 20%, oklch(0.66 0.18 282 / 0.12), transparent 60%)",
+            pointerEvents: "none",
+          }} />
+
+          {/* Header row */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, position: "relative" }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 540, letterSpacing: "-0.02em", color: "var(--fg)" }}>
+                Good evening, Maya ✦
               </div>
-            ))}
-            <div className="dashboard-card-soft rounded-[1.75rem] p-4 text-sm font-semibold leading-6 text-muted">
-              Every insight shows assumptions first. Tiny numbers and big
-              feelings, handled gently.
+              <div style={{ fontSize: 12, color: "var(--fg-mute)", marginTop: 2 }}>
+                You&apos;re{" "}
+                <span style={{ color: "oklch(0.73 0.13 152)" }}>$84 ahead</span>{" "}
+                on this week&apos;s plan.
+              </div>
+            </div>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "4px 10px 4px 8px", borderRadius: 999,
+              background: "oklch(0.66 0.18 282 / 0.15)",
+              boxShadow: "0 0 0 1px oklch(0.66 0.18 282 / 0.25)",
+              fontSize: 11.5, fontWeight: 500, color: "oklch(0.85 0.10 282)",
+            }}>
+              <span style={{
+                width: 6, height: 6, borderRadius: "50%",
+                background: "var(--primary-glow)",
+                boxShadow: "0 0 8px var(--primary-glow)",
+              }} />
+              Level 4 · Steady
             </div>
           </div>
-        </Card>
+
+          {/* 4 metric tiles */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 16 }}>
+            {[
+              { label: "Net worth",     value: "$14,820", delta: "+$612 this month", tone: "primary", accent: true },
+              { label: "Monthly income",value: "$4,250",  delta: "Paid bi-weekly",   tone: "flat" },
+              { label: "Spent this mo", value: "$2,341",  delta: "9% under plan",    tone: "success" },
+              { label: "Saved this mo", value: "$612",    delta: "14.4% of income",  tone: "success" },
+            ].map(({ label, value, delta, tone, accent }) => (
+              <div key={label} style={{
+                padding: "14px 16px", borderRadius: "var(--r-md)",
+                background: "var(--bg-2)",
+                boxShadow: "0 0 0 1px var(--line)",
+                position: "relative", overflow: "hidden",
+              }}>
+                {accent && (
+                  <span style={{
+                    position: "absolute", inset: 0, pointerEvents: "none",
+                    background: "radial-gradient(120px 80px at 100% 0%, oklch(0.66 0.18 282 / 0.12), transparent)",
+                  }} />
+                )}
+                <div style={{ fontSize: 11, color: "var(--fg-dim)", marginBottom: 6 }}>{label}</div>
+                <div style={{
+                  fontFamily: "var(--font-mono)", fontSize: 20, fontWeight: 500,
+                  letterSpacing: "-0.03em", color: "var(--fg)",
+                }}>
+                  {value}
+                </div>
+                <div style={{
+                  fontSize: 10.5, marginTop: 4,
+                  color: tone === "success" ? "oklch(0.73 0.13 152)" :
+                         tone === "primary" ? "oklch(0.78 0.16 282)" :
+                         "var(--fg-mute)",
+                }}>
+                  {delta}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Debt snapshot */}
+          <div style={{
+            padding: "14px 16px", borderRadius: "var(--r-md)",
+            background: "var(--bg-2)",
+            boxShadow: "0 0 0 1px var(--line)",
+            marginBottom: 12,
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--fg)" }}>Debt overview</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "oklch(0.73 0.13 152)" }}>
+                Debt-free Feb 2028
+              </div>
+            </div>
+            {[
+              { name: "Visa Platinum", pct: 32, tone: "danger" as const },
+              { name: "Student Loan",  pct: 58, tone: "primary" as const },
+            ].map(({ name, pct, tone }) => (
+              <div key={name} style={{ marginBottom: 8 }}>
+                <div style={{
+                  display: "flex", justifyContent: "space-between",
+                  fontSize: 12, marginBottom: 4, color: "var(--fg-soft)",
+                }}>
+                  <span>{name}</span>
+                  <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-mute)", fontSize: 11 }}>
+                    {pct}%
+                  </span>
+                </div>
+                <MiniProgressBar value={pct} tone={tone} />
+              </div>
+            ))}
+          </div>
+
+          {/* XP bar */}
+          <div style={{
+            padding: "10px 14px", borderRadius: "var(--r-md)",
+            background: "oklch(0.66 0.18 282 / 0.08)",
+            boxShadow: "0 0 0 1px oklch(0.66 0.18 282 / 0.18)",
+            display: "flex", alignItems: "center", gap: 10,
+          }}>
+            <span style={{ fontSize: 11, color: "var(--fg-mute)", flexShrink: 0 }}>940 XP</span>
+            <div style={{ flex: 1, height: 5, borderRadius: 999, background: "oklch(1 0 0 / 0.06)" }}>
+              <div style={{
+                width: "78%", height: "100%", borderRadius: 999,
+                background: "linear-gradient(90deg, oklch(0.66 0.18 282), oklch(0.78 0.14 250))",
+                boxShadow: "0 0 10px oklch(0.72 0.17 270 / 0.5)",
+              }} />
+            </div>
+            <span style={{
+              fontSize: 11, fontFamily: "var(--font-mono)",
+              color: "oklch(0.85 0.10 282)",
+            }}>
+              Level 5 in +260 XP
+            </span>
+          </div>
+        </div>
       </motion.div>
     </section>
   );

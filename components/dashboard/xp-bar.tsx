@@ -15,16 +15,28 @@ export function XPBar({
 
   return (
     <div>
-      <div className="mb-2 flex items-center gap-3">
-        <span className="rounded bg-primary px-2 py-1 text-xs font-black text-white">
-          LVL {level}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          padding: "3px 8px 3px 6px", borderRadius: 999,
+          background: "oklch(0.66 0.18 282 / 0.18)",
+          fontSize: 11, fontWeight: 540, color: "oklch(0.85 0.10 282)",
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: "50%",
+            background: "var(--primary-glow)",
+            boxShadow: "0 0 8px var(--primary-glow)",
+          }} />
+          Lvl {level}
         </span>
-        <div className="min-w-0 flex-1">
-          <ProgressBar value={percent} tone="primary" className={compact ? "h-1.5" : "h-2"} />
+        <div style={{ flex: 1 }}>
+          <ProgressBar value={percent} tone="xp" thick={!compact} />
         </div>
-        <span className="text-xs font-bold text-muted">
+        <span style={{
+          fontFamily: "var(--font-mono)", fontSize: 11,
+          color: "var(--fg-dim)", whiteSpace: "nowrap",
+        }}>
           {xp}/{max}
-          {!compact ? " XP" : ""}
         </span>
       </div>
     </div>

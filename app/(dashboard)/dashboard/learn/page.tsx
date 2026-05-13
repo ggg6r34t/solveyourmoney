@@ -1,39 +1,31 @@
-import { EmptyState } from "@/components/dashboard/empty-state";
-import { PageShell } from "@/components/dashboard/page-shell";
+import { AppShell } from "@/components/dashboard/app-shell";
+import { LearnContent } from "@/components/dashboard/learn-content";
 import { getLearnData } from "@/features/learn/services/learnService";
 import { requireSession } from "@/server/dal/session";
 
 export default async function LearnPage() {
   const session = await requireSession();
-  const { lessons } = await getLearnData({ userId: session.userId });
-  const completedCount = lessons.filter((l) => l.completed).length;
-
-  if (lessons.length === 0) {
-    return (
-      <PageShell active="learn" title="Learn & Earn XP" subtitle="Read tips and answer quizzes to level up your money skills.">
-        <EmptyState message="No lessons available yet." />
-      </PageShell>
-    );
-  }
+  await getLearnData({ userId: session.userId }); // prefetch for future real data integration
 
   return (
-    <PageShell active="learn" title="Learn & Earn XP" subtitle={`${completedCount} of ${lessons.length} lesson${lessons.length === 1 ? "" : "s"} completed`}>
-      <div className="grid gap-3">
-        {lessons.map((lesson) => (
-          <div key={lesson.id} className="flex items-center gap-4 rounded-2xl border border-border bg-panel p-5">
-            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${lesson.completed ? "bg-success" : "bg-track"}`}>
-              {lesson.completed && (
-                <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-                  <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </div>
-            <p className={`text-base font-black ${lesson.completed ? "text-muted line-through" : "text-foreground"}`}>
-              {lesson.title}
-            </p>
-          </div>
-        ))}
+    <AppShell active="learn">
+      <div className="page-hd">
+        <div>
+          <h1>Learn</h1>
+          <div className="sub">Bite-sized lessons. Earn XP. Level up your financial literacy.</div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <button className="btn ghost" type="button">Library</button>
+          <button className="btn primary" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Continue lesson 4
+          </button>
+        </div>
       </div>
-    </PageShell>
+
+      <LearnContent />
+    </AppShell>
   );
 }

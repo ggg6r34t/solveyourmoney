@@ -1,5 +1,5 @@
 import type { Metric } from "@/features/dashboard/mockData";
-import { toneText } from "./progress-bar";
+import { toneText } from "./tone-utils";
 
 export function AppMetricCard({ metric }: { metric: Metric }) {
   return (

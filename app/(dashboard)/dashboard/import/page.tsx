@@ -1,14 +1,10 @@
-import { PageShell } from "@/components/dashboard/page-shell";
-import { ImportForm } from "./import-form";
+import { AppShell } from "@/components/dashboard/app-shell";
+import { ImportContent } from "./import-content";
 
 export default function ImportPage() {
   return (
-    <PageShell
-      active="import"
-      title="Import Bank Statement"
-      subtitle="Upload a PDF exported from your bank to populate your debt, budget, or savings."
-    >
-      <ImportForm />
-    </PageShell>
+    <AppShell active="import">
+      <ImportContent />
+    </AppShell>
   );
 }
