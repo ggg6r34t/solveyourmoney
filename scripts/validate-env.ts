@@ -11,6 +11,17 @@ try {
     throw new Error("Mock data is not allowed in production");
   }
 
+  if (
+    env.NEXT_PUBLIC_APP_ENV === "preview" &&
+    env.USE_MOCK &&
+    !env.ALLOW_PREVIEW_MOCK
+  ) {
+    console.warn(
+      "validate-env: WARN — Mock data is enabled in preview but ALLOW_PREVIEW_MOCK_DATA is not set. " +
+        "Set ALLOW_PREVIEW_MOCK_DATA=true to allow, or set NEXT_PUBLIC_USE_MOCK_DATA=false.",
+    );
+  }
+
   console.log("validate-env: OK", {
     env: env.NEXT_PUBLIC_APP_ENV,
     useMock: env.USE_MOCK,
