@@ -297,18 +297,37 @@ export async function createSavingsGoal(input: {
     return { ok: false, message: "Data storage is not configured yet." };
   }
 
-  const { error } = await supabase.from("savings_goals").insert({
-    user_id: session.userId,
-    name: parsed.data.name,
-    target_amount: parsed.data.targetAmount,
-    saved_amount: 0,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
+  const { data: goal, error } = await supabase
+    .from("savings_goals")
+    .insert({
+      user_id: session.userId,
+      name: parsed.data.name,
+      target_amount: parsed.data.targetAmount,
+      saved_amount: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
 
   if (error) {
     return { ok: false, message: "We could not create this goal." };
   }
+
+  await logDashboardActivity(session.userId, {
+    kind: "savings_goal_created",
+    title: `Created savings goal: ${parsed.data.name}`,
+    description: "A new savings goal was added.",
+    metadata: { goal_id: goal.id, target: parsed.data.targetAmount },
+  });
+
+  await writeAuditLog({
+    actorId: session.userId,
+    action: "dashboard.savings_goal_created",
+    targetType: "savings_goal",
+    targetId: goal.id,
+    metadata: { name: parsed.data.name, target: parsed.data.targetAmount },
+  });
 
   revalidateDashboard();
   return { ok: true, message: "Goal created." };
