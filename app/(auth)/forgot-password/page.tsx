@@ -29,6 +29,7 @@ export default function ForgotPasswordPage() {
               required
               name="email"
               type="email"
+              autoComplete="email"
               style={{
                 height: 36,
                 background: "oklch(1 0 0 / 0.04)",

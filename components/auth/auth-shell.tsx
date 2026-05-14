@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
-    <div
+    <main
       className="app-bg"
       style={{ minHeight: "100vh", display: "grid", gridTemplateColumns: "45fr 55fr" }}
     >
@@ -115,6 +115,6 @@ export function AuthShell({ children }: { children: ReactNode }) {
           {children}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -15,9 +15,9 @@ export function SignInForm() {
   const [state, action] = useActionState(signInAction, initialState);
   return (
     <form action={action} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <Field label="Email" name="email" type="email" />
+      <Field label="Email" name="email" type="email" autoComplete="email" />
       <div>
-        <Field label="Password" name="password" type="password" />
+        <Field label="Password" name="password" type="password" autoComplete="current-password" />
         <div style={{ textAlign: "right", marginTop: 6 }}>
           <Link
             href="/forgot-password"
@@ -37,9 +37,9 @@ export function SignUpForm() {
   const [state, action] = useActionState(signUpAction, initialState);
   return (
     <form action={action} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <Field label="Name" name="displayName" />
-      <Field label="Email" name="email" type="email" />
-      <Field label="Password" name="password" type="password" />
+      <Field label="Name" name="displayName" autoComplete="name" />
+      <Field label="Email" name="email" type="email" autoComplete="email" />
+      <Field label="Password" name="password" type="password" autoComplete="new-password" />
       <SubmitButton pendingText="Creating account…">Create account</SubmitButton>
       <FormMessage state={state} />
     </form>
@@ -50,10 +50,12 @@ function Field({
   label,
   name,
   type = "text",
+  autoComplete,
 }: {
   label: string;
   name: string;
   type?: string;
+  autoComplete?: string;
 }) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -62,6 +64,7 @@ function Field({
         required
         name={name}
         type={type}
+        autoComplete={autoComplete}
         style={{
           height: 36,
           background: "oklch(1 0 0 / 0.04)",
@@ -104,6 +107,7 @@ function FormMessage({ state }: { state: AuthFormState }) {
   if (!state.message) return null;
   return (
     <div
+      role="alert"
       style={{
         background: "var(--danger-soft)",
         color: "var(--danger)",
