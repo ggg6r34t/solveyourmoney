@@ -16,6 +16,7 @@ import {
   Flame,
   LogOut,
 } from "lucide-react";
+import { DesktopSidebarShell } from "./sidebar-shell";
 
 const getGamificationDataCached = cache(getGamificationData);
 
@@ -450,29 +451,13 @@ export function AppShell({
       {/* Mobile top bar */}
       <MobileTopBar active={active} />
 
-      {/* Desktop sidebar */}
-      <aside
-        style={{
-          position: "fixed", inset: "0 auto 0 0", zIndex: 20,
-          width: 264,
-          borderRight: "1px solid var(--line)",
-          background: "linear-gradient(180deg, oklch(0.16 0.014 282 / 0.6), oklch(0.135 0.012 282 / 0.6))",
-          backdropFilter: "blur(12px)",
-          padding: "20px 14px",
-          display: "flex", flexDirection: "column", gap: 18,
-          overflowY: "auto",
-        }}
-        className="hidden lg:flex"
+      {/* Desktop sidebar (collapsible) + main content */}
+      <DesktopSidebarShell
+        active={active}
+        sidebarContents={<SidebarContents active={active} />}
       >
-        <SidebarContents active={active} />
-      </aside>
-
-      {/* Main content */}
-      <main style={{ paddingLeft: 0 }} className="lg:pl-66">
-        <div className="main-content">
-          {children}
-        </div>
-      </main>
+        {children}
+      </DesktopSidebarShell>
 
       {/* Mobile bottom nav */}
       <MobileBottomNav active={active} />
