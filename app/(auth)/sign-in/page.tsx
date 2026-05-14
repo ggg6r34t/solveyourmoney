@@ -3,25 +3,37 @@ import { SignInForm } from "@/components/forms/auth-forms";
 
 export default function SignInPage() {
   return (
-    <div className="mt-2">
-      <p className="text-xs font-black uppercase tracking-[0.22em] text-primary/72">
-        Sign in
-      </p>
-      <h1 className="mt-3 text-4xl font-black tracking-[-0.04em]">
-        Welcome back.
-      </h1>
-      <p className="mt-3 leading-7 text-muted">
-        Pick up where you left off and turn today&apos;s money question into a clearer next step.
-      </p>
-      <div className="mt-8">
+    <>
+      <div className="card" style={{ padding: 28 }}>
+        <p
+          style={{
+            fontSize: 10,
+            fontFamily: "var(--font-mono), monospace",
+            color: "var(--fg-dim)",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            margin: 0,
+          }}
+        >
+          Sign in
+        </p>
+        <h2 style={{ fontSize: 22, fontWeight: 560, color: "var(--fg)", margin: "6px 0 4px" }}>
+          Welcome back.
+        </h2>
+        <p style={{ fontSize: 13, color: "var(--fg-soft)", marginBottom: 20 }}>
+          Pick up where you left off and turn today&apos;s money question into a clearer next step.
+        </p>
         <SignInForm />
       </div>
-      <p className="mt-6 text-sm text-muted">
+      <p
+        className="f-xs"
+        style={{ color: "var(--fg-soft)", textAlign: "center", marginTop: 16 }}
+      >
         Need an account?{" "}
-        <Link className="font-bold text-primary" href="/sign-up">
+        <Link href="/sign-up" style={{ color: "var(--primary-glow)", fontWeight: 520 }}>
           Create one
         </Link>
       </p>
-    </div>
+    </>
   );
 }
