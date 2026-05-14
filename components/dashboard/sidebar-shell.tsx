@@ -103,7 +103,7 @@ export function DesktopSidebarShell({
 
       {/* Main content — padding-left tracks sidebar width on desktop */}
       <main
-        style={{ paddingLeft: 0, transition: "padding-left 200ms cubic-bezier(0.4, 0, 0.2, 1)" }}
+        style={{ transition: "padding-left 200ms cubic-bezier(0.4, 0, 0.2, 1)" }}
         className={collapsed ? "lg:pl-16" : "lg:pl-66"}
       >
         <div className="main-content">
