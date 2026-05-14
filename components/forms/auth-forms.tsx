@@ -20,7 +20,7 @@ export function SignInForm() {
         <Field label="Password" name="password" type="password" />
         <div style={{ textAlign: "right", marginTop: 6 }}>
           <Link
-            href={"/forgot-password" as any}
+            href="/forgot-password"
             style={{ fontSize: 12, color: "var(--primary-glow)", textDecoration: "none" }}
           >
             Forgot password?
